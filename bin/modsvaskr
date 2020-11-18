@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# require 'mod_organizer'
+require 'modsvaskr/config'
+require 'modsvaskr/ui'
+
+begin
+  # mo = ModOrganizer.new(
+  #   # 'H:/Env/Windows/Programs/ModOrganizer',
+  #   'C:/Program Files/ModOrganizer',
+  #   nexus_mods_api_key: 'SlVvZ3RCRnQ1MGd1UGFBVStXeVliNnExajkwRllMcmI3cUtKUjJRVzBLSkxMOXdScDVWbkJSZWcvWHh4S2grTy0tZkNIRFpkNks2WUNpUXZNUGZWcG0rdz09--62dcd41bb308d2d660548a3cd1ef4094162c4379',
+  #   esps_cache_file: 'G:/OpenSource/Repositories/OpenSource/modsvaskr/tools/esps_cache.json',
+  #   mods_cache_file: 'G:/OpenSource/Repositories/OpenSource/modsvaskr/tools/mods_cache.json'
+  # )
+  begin
+    Modsvaskr::Ui.new(config: Modsvaskr::Config.new('./modsvaskr.yaml')).run
+  ensure
+    # mo.write_esps_cache
+    # mo.write_mods_cache
+  end
+rescue
+  puts "Unhandled exception: #{$!}\n#{$!.backtrace.join("\n")}"
+  puts 'Press Enter to exit.'
+  $stdin.gets
+end
