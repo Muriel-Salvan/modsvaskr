@@ -18,6 +18,6 @@ Gem::Specification.new do |spec|
   spec.bindir = 'bin'
   spec.executables << 'modsvaskr'
 
-  spec.add_dependency 'curses_menu'
-  spec.add_dependency 'nokogiri'
+  spec.add_dependency 'curses_menu', '~> 0.0'
+  spec.add_dependency 'nokogiri', '~> 1.10'
 end
