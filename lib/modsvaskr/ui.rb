@@ -1,5 +1,4 @@
 require 'csv'
-require 'launchy'
 require 'curses_menu'
 require 'modsvaskr/logger'
 require 'modsvaskr/tests_runner'
