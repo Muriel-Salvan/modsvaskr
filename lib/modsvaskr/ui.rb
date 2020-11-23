@@ -95,7 +95,7 @@ module Modsvaskr
                       end
                       :menu_refresh
                     end
-                    test_menu.item 'Register tests from selected test types' do
+                    test_menu.item 'Register tests from selected test suites' do
                       selected_tests_suites.keys.each do |tests_suite|
                         tests_runner.set_statuses_for(
                           tests_suite,
@@ -107,7 +107,7 @@ module Modsvaskr
                       end
                       :menu_refresh
                     end
-                    test_menu.item 'Unregister tests from selected test types' do
+                    test_menu.item 'Unregister tests from selected test suites' do
                       selected_tests_suites.keys.each do |tests_suite|
                         tests_runner.clear_tests_for(tests_suite)
                       end
@@ -159,6 +159,11 @@ module Modsvaskr
             :menu_exit
           end
         end
+      rescue
+        log "Unhandled exception: #{$!}\n#{$!.backtrace.join("\n")}"
+        raise
+      ensure
+        log 'Close Modsvaskr UI'
       end
     end
 

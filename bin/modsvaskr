@@ -6,7 +6,6 @@ require 'modsvaskr/ui'
 begin
   Modsvaskr::Ui.new(config: Modsvaskr::Config.new('./modsvaskr.yaml')).run
 rescue
-  puts "Unhandled exception: #{$!}\n#{$!.backtrace.join("\n")}"
   puts 'Press Enter to exit.'
   $stdin.gets
 end
