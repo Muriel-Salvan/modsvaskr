@@ -28,8 +28,7 @@ module Modsvaskr
     # * *script* (String): Script name, as defined in xedit_scripts (without the Modsvaskr_ prefix and .pas suffix)
     # * *only_once* (Boolean): If true, then make sure this script is run only once by instance [default: false]
     def run_script(script, only_once: false)
-      if false
-      # if !only_once || !@runs.key?(script)
+      if !only_once || !@runs.key?(script)
         FileUtils.cp "#{__dir__}/../../xedit_scripts/Modsvaskr_#{script}.pas", "#{@install_path}/Edit Scripts/Modsvaskr_#{script}.pas"
         run_cmd(
           {
