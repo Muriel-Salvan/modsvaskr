@@ -50,6 +50,15 @@ The list of games that should be compatible with Modsvaskr are the following:
 The list of supported games in the current version of Modsvaskr is found in the [`lib/modsvaskr/games`](lib/modsvaskr/games) folder.
 Adding a new compatible game should be as easy as adding a file in this directory and implementing its API in Ruby.
 
+## Requirements
+
+3 tools and 2 mods are needed for Modsvaskr to work:
+* [Ruby 2.6.6 with DevKit](https://rubyinstaller.org/downloads/) as this is the language Modsvaskr is written in - Don't install a version greater or equal to 2.7 for the time being as some dependencies don't work well on Windows in those versions.
+* [SKSE](https://skse.silverlock.org/) to support a lot of scripting. - You have to install this on your Bethesda game.
+* [xEdit](https://www.nexusmods.com/skyrimspecialedition/mods/164) to get information from mods. - You have to install this in a common programs directory (like Program Files), and not in your game folder.
+* [AutoLoad](https://www.nexusmods.com/skyrimspecialedition/mods/41478) to be able to automatically restart the game after a CTD. - Install this like any other mod.
+* [AutoTest](https://www.nexusmods.com/skyrimspecialedition/mods/42520) to be able to automatically run in-game testing. - Install this like any other mod.
+
 ## Install
 
 Via gem
@@ -199,6 +208,21 @@ Here is an example of execution logs:
 ```
 
 They are also accessible through Modsvaskr's UI, in the `See logs` menu item.
+
+## Update
+
+When a new version is available, Modsvaskr will mention it in the header of the main menu:
+![Update notification](docs/update_notification.png)
+
+Updating Modsvaskr to the latest version is done the standard way for any Rubygem:
+``` bash
+gem update modsvaskr
+```
+
+Or if you are using Bundler:
+``` bash
+bundle update modsvaskr
+```
 
 ## Change log
 

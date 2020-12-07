@@ -23,17 +23,26 @@ module Modsvaskr
     # Run the UI
     def run
       begin
-        CursesMenu.new 'Modsvaskr - Stronghold of Mods' do |main_menu|
+        last_modsvaskr_version = nil
+        gem_list_stdout = `gem list modsvaskr --remote`
+        gem_list_stdout.split("\n").each do |line|
+          if line =~ /^modsvaskr \((.+?)\)/
+            last_modsvaskr_version = $1
+            break
+          end
+        end
+        log "!!! Could not get latest Modsvaskr version. Output of gem list modsvaskr --remote:\n#{gem_list_stdout}" if last_modsvaskr_version.nil?
+        CursesMenu.new "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods#{!last_modsvaskr_version.nil? && last_modsvaskr_version != Modsvaskr::VERSION ? " - !!! New version available: #{last_modsvaskr_version}" : ''}" do |main_menu|
           @config.games.each do |game|
             main_menu.item "#{game.name} (#{game.path})" do
-              CursesMenu.new "Modsvaskr - Stronghold of Mods > #{game.name}" do |game_menu|
+              CursesMenu.new "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name}" do |game_menu|
                 game_menu.item 'Testing' do
                   # Read tests info
                   tests_runner = TestsRunner.new(game)
                   # Selected test names, per test type
                   # Hash< Symbol, Hash< String, nil > >
                   selected_tests_suites = {}
-                  CursesMenu.new "Modsvaskr - Stronghold of Mods > #{game.name} > Testing" do |test_menu|
+                  CursesMenu.new "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name} > Testing" do |test_menu|
                     tests_runner.tests_suites.each do |tests_suite|
                       statuses_for_suite = tests_runner.statuses_for(tests_suite)
                       all_tests_selected = selected_tests_suites.key?(tests_suite) &&
@@ -52,7 +61,7 @@ module Modsvaskr
                           'd' => {
                             name: 'Details',
                             execute: proc do
-                              CursesMenu.new "Modsvaskr - Stronghold of Mods > #{game.name} > Testing > Tests #{tests_suite}" do |tests_suite_menu|
+                              CursesMenu.new "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name} > Testing > Tests #{tests_suite}" do |tests_suite_menu|
                                 statuses_for_suite.each do |(test_name, test_status)|
                                   test_selected = selected_tests_suites.key?(tests_suite) && selected_tests_suites[tests_suite].key?(test_name)
                                   tests_suite_menu.item "[#{test_selected ? '*' : ' '}] #{test_name} - #{test_status} - #{tests_runner.test_info(tests_suite, test_name)[:name]}" do
