@@ -8,6 +8,16 @@ games:
     type: skyrim_se
     # The executable to be launched to run the game.
     launch_exe: skse64_loader.exe
+    # Next attributes are optional and can be omitted.
+    # Minimum time the game takes to be launched, in second (defaults to 10)
+    # min_launch_time_secs: 10
+    # Interval in seconds between polling for tests statuses while the game is running (defaults to 5)
+    # tests_poll_secs: 5
+    # Period in seconds after which we consider the game is frozen if no test status has been updated (defaults to 300)
+    # timeout_frozen_tests_secs: 300
+    # Timeout between 2 game runs for the player to interrupt testing (defaults to 10)
+    # timeout_interrupt_tests_secs: 10
+
 
 # Path where xEdit is installed
 xedit: C:/Programs/SSEEdit 4_0_3-164-4-0-3-1575326827
