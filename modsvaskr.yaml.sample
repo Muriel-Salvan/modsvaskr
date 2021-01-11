@@ -11,3 +11,6 @@ games:
 
 # Path where xEdit is installed
 xedit: C:/Programs/SSEEdit 4_0_3-164-4-0-3-1575326827
+
+# Path where 7-Zip is installed
+7zip: C:\Program Files\7-Zip
