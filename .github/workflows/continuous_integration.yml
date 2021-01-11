@@ -5,14 +5,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
+
+      - name: Check-out code
+        uses: actions/checkout@v2
+
+      - name: Install Ruby
+        uses: actions/setup-ruby@v1
         with:
           ruby-version: '2.6'
+
+      - name: Install dependencies
+        run: bundle install
+
       # Need to use the shell step in order for ncurses to work in a TTY
       # cf https://github.com/actions/runner/issues/241
-      - name: Run tests in a TTY
-        shell: 'script -q -e -c "bash {0}"'
-        run: |
-          bundle install
-          TERM=xterm-256color bundle exec rspec --format documentation
+      - name: Run tests
+        run: TERM=xterm-256color bundle exec rspec --format documentation
