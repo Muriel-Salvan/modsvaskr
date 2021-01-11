@@ -21,4 +21,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'curses_menu', '~> 0.0'
   spec.add_dependency 'elder_scrolls_plugin', '~> 0.0'
   spec.add_dependency 'nokogiri', '~> 1.10'
+
+  # Development dependencies (tests, debugging)
+  # Test framework
+  spec.add_development_dependency 'rspec', '~> 3.10'
+  # Mock HTTP calls
+  spec.add_development_dependency 'webmock', '~> 3.11'
 end
