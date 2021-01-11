@@ -54,7 +54,7 @@ module Modsvaskr
               ) do |game_menu|
                 game_menu.item 'Testing' do
                   # Read tests info
-                  tests_runner = TestsRunner.new(game)
+                  tests_runner = TestsRunner.new(@config, game)
                   # Selected test names, per test type
                   # Hash< Symbol, Hash< String, nil > >
                   selected_tests_suites = {}

@@ -12,17 +12,11 @@ module Modsvaskr
     # Default values are for a standard Skyrim SE installation.
     #
     # Parameters::
+    # * *config* (Config): Main configuration
     # * *game* (Game): Game for which we run tests
-    # * *tests_poll_secs* (Integer): Number of seconds to poll for the game run and tests changes [default: 5]
-    # * *timeout_frozen_tests_secs* (Integer): Time out (in seconds) between tests updates: if no test has been updated before this timeout, consider the game has crashed. [default: 300]
-    def initialize(
-      game,
-      tests_poll_secs: 5,
-      timeout_frozen_tests_secs: 300
-    )
+    def initialize(config, game)
+      @config = config
       @game = game
-      @tests_poll_secs = tests_poll_secs
-      @timeout_frozen_tests_secs = timeout_frozen_tests_secs
       # Parse tests suites
       @tests_suites = Hash[Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
         tests_suite = File.basename(tests_suite_file, '.rb').to_sym
