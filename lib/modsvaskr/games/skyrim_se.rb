@@ -23,8 +23,8 @@ module Modsvaskr
       def complete_game_menu(menu)
         menu.item 'Install SKSE64' do
           install_skse64
-          puts 'Press Enter to continue...'
-          $stdin.gets
+          out 'Press Enter to continue...'
+          wait_for_user_enter
         end
       end
 

@@ -14,3 +14,19 @@ xedit: C:/Programs/SSEEdit 4_0_3-164-4-0-3-1575326827
 
 # Path where 7-Zip is installed
 7zip: C:\Program Files\7-Zip
+
+# Uncomment the auto_keys section to automate some key strokes in the menu (useful for automation).
+# Possible keys that can be used:
+# * Key symbols defined here: https://github.com/ruby/curses/blob/master/ext/curses/curses.c#L5550
+# * KEY_ENTER
+# * KEY_ESCAPE
+# * Any printable character
+# auto_keys:
+#   - KEY_DOWN
+#   - h
+#   - KEY_ENTER
+#   - KEY_ESCAPE
+#   - KEY_ESCAPE
+
+# Set no_prompt to true if you want to skip the pauses asking you to hit Enter to continue (useful for automation).
+no_prompt: false

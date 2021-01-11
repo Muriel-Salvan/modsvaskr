@@ -58,6 +58,22 @@ module Modsvaskr
       @config['7zip']
     end
 
+    # Return the automated keys to apply
+    #
+    # Result::
+    # * Array<String>: The list of automated keys
+    def auto_keys
+      @config['auto_keys'] || []
+    end
+
+    # Return the no_prompt flag
+    #
+    # Result::
+    # * Boolean: no_prompt flag
+    def no_prompt
+      @config['no_prompt'] || false
+    end
+
   end
 
 end
