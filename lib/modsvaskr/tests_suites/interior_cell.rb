@@ -44,16 +44,15 @@ module Modsvaskr
         ]
       end
 
-      # Get the list of tests to be run in the AutoTest mod for a given list of test names.
-      # AutoTest names are case insensitive.
+      # Get the list of tests to be run in-game for a given list of test names.
       # [API] - This method is mandatory for tests needing to be run in-game.
       #
       # Parameters::
       # * *tests* (Array<String>): List of test names
       # Result::
-      # * Hash<String, Array<String> >: List of AutoTest mod test names, per AutoTest mod tests suite
-      def auto_tests_for(tests)
-        { 'Locations' => tests }
+      # * Hash<Symbol, Array<String> >: List of in-game test names, per in-game tests suite
+      def in_game_tests_for(tests)
+        { locations: tests }
       end
 
       # Set statuses based on the result of AutoTest statuses.
@@ -62,11 +61,11 @@ module Modsvaskr
       #
       # Parameters::
       # * *tests* (Array<String>): List of test names
-      # * *auto_test_statuses* (Hash<String, Array<[String, String]> >): Ordered list of AutoTest [test name, test status], per AutoTest tests suite
+      # * *auto_test_statuses* (Hash<Symbol, Array<[String, String]> >): Ordered list of AutoTest [test name, test status], per AutoTest tests suite
       # Result::
       # * Array<[String, String]>: Corresponding list of [test name, test status]
       def parse_auto_tests_statuses_for(tests, auto_test_statuses)
-        auto_test_statuses.key?('Locations') ? auto_test_statuses['Locations'] : []
+        auto_test_statuses.key?(:locations) ? auto_test_statuses[:locations] : []
       end
 
     end
