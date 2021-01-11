@@ -66,7 +66,7 @@ begin
   slCsv.SaveToFile(ProgramPath + 'Edit Scripts\Modsvaskr_ExportedDumpInfo.csv');
   slCsv.Free;
   AddMessage('Export done in ' + ProgramPath + 'Edit Scripts\Modsvaskr_ExportedDumpInfo.csv');
-  Application.Terminate;
+  // Application.Terminate;
   // ExitProcess(0);
   Result := 0;
 end;
