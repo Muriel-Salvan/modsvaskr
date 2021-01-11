@@ -31,6 +31,7 @@ module Modsvaskr
         'timeout_interrupt_tests_secs' => 10
       }.merge(game_info)
       @name = name
+      @pid = nil
       init if self.respond_to?(:init)
     end
 
@@ -89,6 +90,88 @@ module Modsvaskr
     def xedit
       @xedit = Xedit.new(@config.xedit_path, path) unless defined?(@xedit)
       @xedit
+    end
+
+    # Launch the game, and wait for launch to be successful
+    #
+    # Parameters::
+    # * *autoload* (Boolean or String): If false, then launch the game using the normal launcher. If String, then use AutoLoad to load a given saved file (or empty to continue latest save) [default: false].
+    def launch(autoload: false)
+      # Launch the game
+      @idx_launch = 0 unless defined?(@idx_launch)
+      if autoload
+        log "[ Game #{name} ] - Launch game (##{@idx_launch}) using AutoLoad #{autoload}..."
+        autoload_file = "#{path}/Data/AutoLoad.cmd"
+        if File.exist?(autoload_file)
+          run_cmd({
+            dir: path,
+            exe: 'Data\AutoLoad.cmd',
+            args: [autoload]
+          })
+        else
+          log "[ Game #{name} ] - Missing file #{autoload_file}. Can't use AutoLoad to load game automatically. Please install the AutoLoad mod."
+        end
+      else
+        log "[ Game #{name} ] - Launch game (##{@idx_launch}) using configured launcher (#{launch_exe})..."
+        run_cmd({
+          dir: path,
+          exe: launch_exe
+        })
+      end
+      @idx_launch += 1
+      # The game launches asynchronously, so just wait a little bit and check for the process existence
+      sleep @game_info['min_launch_time_secs']
+      tasklist_stdout = nil
+      loop do
+        tasklist_stdout = `tasklist | find "#{running_exe}"`.strip
+        break unless tasklist_stdout.empty?
+        log "[ Game #{name} ] - #{running_exe} is not running. Wait for its startup..."
+        sleep 1
+      end
+      @pid = Integer(tasklist_stdout.split(' ')[1])
+      log "[ Game #{name} ] - #{running_exe} has started with PID #{@pid}"
+    end
+
+    # Is the game currently running?
+    #
+    # Result::
+    # * Boolean: Is the game currently running?
+    def running?
+      if @pid
+        running = true
+        begin
+          # Process.kill does not work when the game has crashed (the process is still detected as zombie)
+          # running = Process.kill(0, @pid) == 1
+          tasklist_stdout = `tasklist | find "#{running_exe}"`.strip
+          running = !tasklist_stdout.empty?
+          # log "[ Game #{name} ] - Tasklist returned no #{running_exe}:\n#{tasklist_stdout}" unless running
+        rescue Errno::ESRCH
+          log "[ Game #{name} ] - Got error while waiting for #{running_exe} PID #{@pid}: #{$!}"
+          running = false
+        end
+        @pid = nil unless running
+        running
+      else
+        false
+      end
+    end
+
+    # Kill the game, and wait till it is killed
+    def kill
+      if @pid
+        first_time = true
+        while @pid do
+          system "taskkill #{first_time ? '' : '/F '}/pid #{@pid}"
+          first_time = false
+          sleep 1
+          if running?
+            log "[ Game #{name} ] - #{running_exe} is still running (PID #{@pid}). Wait for its kill..."
+            sleep 5
+          end
+        end
+      else
+        log "[ Game #{name} ] - Game not started, so nothing to kill."
+      end
     end
 
   end

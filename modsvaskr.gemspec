@@ -19,5 +19,6 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency 'curses_menu', '~> 0.0'
+  spec.add_dependency 'elder_scrolls_plugin', '~> 0.0'
   spec.add_dependency 'nokogiri', '~> 1.10'
 end
