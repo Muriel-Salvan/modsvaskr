@@ -50,6 +50,14 @@ module Modsvaskr
       @config['xedit']
     end
 
+    # Return the 7-Zip path
+    #
+    # Result::
+    # * String: The 7-Zip path
+    def seven_zip_path
+      @config['7zip']
+    end
+
   end
 
 end

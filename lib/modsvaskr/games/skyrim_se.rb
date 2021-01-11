@@ -9,11 +9,6 @@ module Modsvaskr
     # Handle a Skyrim installation
     class SkyrimSe < Game
 
-      SEVEN_ZIP_CMD = {
-        dir: 'C:\Program Files\7-Zip',
-        exe: '7z.exe'
-      }
-
       # Initialize the game
       # [API] - This method is optional
       def init
@@ -60,7 +55,7 @@ module Modsvaskr
 
       # Install SKSE64 corresponding to our game
       def install_skse64
-        doc = Nokogiri::HTML(open('https://skse.silverlock.org/'))
+        doc = Nokogiri::HTML(URI.open('https://skse.silverlock.org/'))
         p_element = doc.css('p').find { |el| el.text.strip =~ /^Current SE build .+: 7z archive$/ }
         if p_element.nil?
           log '!!! Can\'t get SKSE64 from https://skse.silverlock.org/. It looks like the page structure has changed. Please update the code or install it manually.'
@@ -69,14 +64,20 @@ module Modsvaskr
           path = "#{@tmp_dir}/skse64.7z"
           FileUtils.mkdir_p File.dirname(path)
           log "Download from #{url} => #{path}..."
-          open(url, 'rb') do |web_io|
+          URI.open(url, 'rb') do |web_io|
             File.write(path, web_io.read, mode: 'wb')
           end
           skse64_tmp_dir = "#{@tmp_dir}/skse64"
           log "Unzip into #{skse64_tmp_dir}..."
           FileUtils.rm_rf skse64_tmp_dir
           FileUtils.mkdir_p skse64_tmp_dir
-          run_cmd SEVEN_ZIP_CMD, args: ['x', "\"#{path}\"", "-o\"#{skse64_tmp_dir}\"", '-r']
+          run_cmd(
+            {
+              dir: @config.seven_zip_path,
+              exe: '7z.exe'
+            },
+            args: ['x', "\"#{path}\"", "-o\"#{skse64_tmp_dir}\"", '-r']
+          )
           skse64_subdir = Dir.glob("#{skse64_tmp_dir}/*").first
           log "Move files from #{skse64_subdir} to #{self.path}..."
           FileUtils.cp_r "#{skse64_subdir}/.", self.path, remove_destination: true
