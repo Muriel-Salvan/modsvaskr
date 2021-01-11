@@ -3,7 +3,7 @@
 games:
   - name: Skyrim SE
     # The installation path (containing the launch executable).
-    path: C:/Program Files (x86)/Steam/steamapps/common/Skyrim Special Edition
+    path: C:\Program Files (x86)\Steam\steamapps\common\Skyrim Special Edition
     # Possible types are defined as the file names in lib/modsvaskr/games/*.rb
     type: skyrim_se
     # The executable to be launched to run the game.
@@ -20,7 +20,7 @@ games:
 
 
 # Path where xEdit is installed
-xedit: C:/Programs/SSEEdit 4_0_3-164-4-0-3-1575326827
+xedit: C:\Programs\SSEEdit 4_0_3-164-4-0-3-1575326827
 
 # Path where 7-Zip is installed
 7zip: C:\Program Files\7-Zip
