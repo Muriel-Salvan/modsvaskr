@@ -12,7 +12,7 @@ module Modsvaskr
     # * *args* (Array<String>): Additional arguments to give the command [default: []]
     def run_cmd(cmd, args: [])
       Dir.chdir cmd[:dir] do
-        cmd_line = "#{cmd[:exe]} #{((cmd.key?(:args) ? cmd[:args] : []) + args).join(' ')}"
+        cmd_line = "\"#{cmd[:exe]}\" #{((cmd.key?(:args) ? cmd[:args] : []) + args).join(' ')}".strip
         raise "Unable to execute command line from \"#{cmd[:dir]}\": #{cmd_line}" unless system cmd_line
       end
     end
