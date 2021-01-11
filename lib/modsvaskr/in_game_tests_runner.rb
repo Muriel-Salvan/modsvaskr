@@ -213,6 +213,7 @@ module Modsvaskr
                 end
               if key_pressed
                 log "[ In-game testing #{@game.name} ] - Run interrupted by user."
+                # TODO: Remove AutoTest start on load: it has been interrupted by the user, so we should not keep it in case the user launches the game by itself.
                 break
               end
             end
