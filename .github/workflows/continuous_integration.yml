@@ -28,7 +28,7 @@ jobs:
       # cf https://github.com/actions/runner/issues/241
       - name: Run unit tests
         # shell: "bash -ilc {0}"
-        run: unbuffer bundle exec rspec --format documentation -e"Game tests menu checking in-game test run does not run in-game tests if AutoTest is not installed"
+        run: TERM=xterm-256color unbuffer bundle exec rspec --format documentation -e"Game tests menu checking in-game test run does not run in-game tests if AutoTest is not installed"
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
