@@ -22,9 +22,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'elder_scrolls_plugin', '~> 0.0'
   spec.add_dependency 'nokogiri', '~> 1.10'
 
-  # Development dependencies (tests, debugging)
+  # Development dependencies (tests, build)
   # Test framework
   spec.add_development_dependency 'rspec', '~> 3.10'
   # Mock HTTP calls
   spec.add_development_dependency 'webmock', '~> 3.11'
+  # Automatic semantic releasing
+  spec.add_development_dependency 'sem_ver_components', '~> 0.0'
 end

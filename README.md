@@ -1,3 +1,5 @@
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+
 # Stronghold for mods acting like companions: The Modsvaskr
 
 Command-line UI handling a full Mods' ecosystem for Bethesda's games.
@@ -76,13 +78,13 @@ gem 'modsvaskr'
 Modsvaskr needs a configuration file to be created in the current directory from which it is executed, named `modsvaskr.yaml`.
 Check the [`modsvaskr.yaml.sample`](modsvaskr.yaml.sample) file to know how to create it.
 
-running Modsvaskr is done this way:
+## Usage
+
+Running Modsvaskr is done this way:
 
 ``` bash
 modsvaskr
 ```
-
-## Usage
 
 Modsvaskr is a simple command-line UI organized as hierarchical menus, in which you navigate with the arrow keys, page up/down, `Home`, `End`, `Esc`, and select/enter elements using mostly the `Enter` key. Specific items may have different actions linked to other keys, documented at the bottom of the UI.
 

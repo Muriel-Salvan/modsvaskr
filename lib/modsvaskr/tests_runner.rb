@@ -36,7 +36,7 @@ module Modsvaskr
     # Result::
     # * Array<Symbol>: List of tests suites
     def tests_suites
-      @tests_suites.keys
+      @tests_suites.keys.sort
     end
 
     # Return test names for a given tests suite
