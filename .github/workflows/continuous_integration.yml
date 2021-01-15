@@ -22,7 +22,7 @@ jobs:
       #   uses: Yuri6037/Action-FakeTTY@v1
 
       - name: Install expect to be able to use unbuffer
-        run: apt install expect
+        run: sudo apt install expect
 
       # Need to specify TERM in order for ncurses to work in a TTY
       # cf https://github.com/actions/runner/issues/241
