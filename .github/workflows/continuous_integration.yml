@@ -42,7 +42,7 @@ jobs:
       - name: Run unit tests
         # shell: "bash -ilc {0}"
         # shell: 'script -q -e -c "bash {0}"'
-        run: bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"
+        run: TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
