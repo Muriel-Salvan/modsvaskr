@@ -21,7 +21,6 @@ module ModsvaskrTest
     # Finalize the curses menu window
     def curses_menu_finalize
       ModsvaskrTest.screenshots << capture_screenshot
-      sleep 1
       super
     end
 
