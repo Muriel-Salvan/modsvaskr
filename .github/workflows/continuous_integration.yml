@@ -21,14 +21,14 @@ jobs:
       # - name: Use FakeTTY for ncurses to work
       #   uses: Yuri6037/Action-FakeTTY@v1
 
-      - name: Install expect to be able to use unbuffer
-        run: sudo apt install expect
+      # - name: Install expect to be able to use unbuffer
+      #   run: sudo apt install expect
 
       # Need to specify TERM in order for ncurses to work in a TTY
       # cf https://github.com/actions/runner/issues/241
       - name: Run unit tests
         # shell: "bash -ilc {0}"
-        run: TERM=xterm-256color unbuffer bundle exec rspec --format documentation -e"Game tests menu checking in-game test run does not run in-game tests if AutoTest is not installed"
+        run: script -e -c /bin/bash -c 'TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"'
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
