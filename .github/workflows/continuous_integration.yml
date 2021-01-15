@@ -16,7 +16,7 @@ jobs:
           ruby-version: '2.6'
 
       - name: Install dependencies
-        run: sudo bundle install
+        run: bundle install
 
       # - name: Use FakeTTY for ncurses to work
       #   uses: Yuri6037/Action-FakeTTY@v1
@@ -28,7 +28,7 @@ jobs:
       # cf https://github.com/actions/runner/issues/241
       - name: Run unit tests
         # shell: "bash -ilc {0}"
-        run: sudo script -e -c /bin/bash -c 'TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"'
+        run: script -e -c /bin/bash -c 'stty rows 40 cols 80; TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"'
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
