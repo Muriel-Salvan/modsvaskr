@@ -21,7 +21,7 @@ jobs:
       # Need to specify TERM in order for ncurses to work in a TTY
       # cf https://github.com/actions/runner/issues/241
       - name: Run unit tests
-        run: TERM=xterm-256color bundle exec rspec --format documentation
+        run: TERM=xterm-256color bundle exec rspec --format documentation -e"Game tests menu checking in-game test run does not run in-game tests if AutoTest is not installed"
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
