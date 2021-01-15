@@ -5,44 +5,23 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container:
-      image: ruby:2.6-buster
-      options: --rm -t
     steps:
-
-      - run: pwd
-
-      - run: ruby -v
-
-      - run: ls -la .
 
       - name: Check-out code
         uses: actions/checkout@v2
 
-      - run: pwd
-
-      - run: ls -la .
-
-      # - name: Install Ruby
-      #   uses: actions/setup-ruby@v1
-      #   with:
-      #     ruby-version: '2.6'
+      - name: Install Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
 
       - name: Install dependencies
         run: bundle install
 
-      # - name: Use FakeTTY for ncurses to work
-      #   uses: Yuri6037/Action-FakeTTY@v1
-
-      # - name: Install expect to be able to use unbuffer
-      #   run: sudo apt install expect
-
       # Need to specify TERM in order for ncurses to work in a TTY
       # cf https://github.com/actions/runner/issues/241
       - name: Run unit tests
-        # shell: "bash -ilc {0}"
-        # shell: 'script -q -e -c "bash {0}"'
-        run: TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"
+        run: TERM=xterm-256color bundle exec rspec --format documentation
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
