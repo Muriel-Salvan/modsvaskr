@@ -12,16 +12,16 @@ jobs:
 
       - run: pwd
 
-      - run: ls -la .
+      - run: ruby -v
 
-      - run: ls -la /github/workspace/
+      - run: ls -la .
 
       - name: Check-out code
         uses: actions/checkout@v2
 
-      - run: ls -la .
+      - run: pwd
 
-      - run: ls -la /github/workspace/
+      - run: ls -la .
 
       # - name: Install Ruby
       #   uses: actions/setup-ruby@v1
