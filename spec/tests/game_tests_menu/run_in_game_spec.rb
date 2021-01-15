@@ -6,7 +6,7 @@ describe 'Game tests menu' do
       # Register the key sequence getting to the desired menu
       entering_menu_keys %w[KEY_ENTER KEY_ENTER] +
         # Discover tests
-        %w[KEY_ENTER KEY_DOWN KEY_ENTER KEY_DOWN a a a KEY_DOWN KEY_ENTER KEY_HOME]
+        %w[KEY_ENTER KEY_DOWN KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER KEY_HOME]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
       menu_index_to_test -3
       with_tmp_dir('test_game') do |game_dir|
@@ -41,7 +41,7 @@ describe 'Game tests menu' do
         # Select only in_game_test_2
         keys: %w[KEY_ENTER KEY_ENTER d KEY_DOWN KEY_ENTER KEY_ESCAPE] +
           # Run tests
-          %w[KEY_HOME a a a KEY_DOWN a a a KEY_DOWN a a a KEY_DOWN a a a KEY_DOWN a a a KEY_DOWN a a a KEY_DOWN KEY_ENTER] +
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
           # Check tests statuses
           %w[KEY_HOME d KEY_ESCAPE]
       )
