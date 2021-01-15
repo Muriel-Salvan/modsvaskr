@@ -5,11 +5,23 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container: ruby:2.6-buster
+    container:
+      image: ruby:2.6-buster
+      options: --rm -t
     steps:
+
+      - run: pwd
+
+      - run: ls -la .
+
+      - run: ls -la /github/workspace/
 
       - name: Check-out code
         uses: actions/checkout@v2
+
+      - run: ls -la .
+
+      - run: ls -la /github/workspace/
 
       # - name: Install Ruby
       #   uses: actions/setup-ruby@v1
