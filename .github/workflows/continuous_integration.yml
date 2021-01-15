@@ -18,8 +18,8 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Use FakeTTY for ncurses to work
-        uses: Yuri6037/Action-FakeTTY@v1
+      # - name: Use FakeTTY for ncurses to work
+      #   uses: Yuri6037/Action-FakeTTY@v1
 
       - name: Install expect to be able to use unbuffer
         run: apt install expect
