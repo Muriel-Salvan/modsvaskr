@@ -28,7 +28,8 @@ jobs:
       # cf https://github.com/actions/runner/issues/241
       - name: Run unit tests
         # shell: "bash -ilc {0}"
-        run: script -e -c /bin/bash -c 'stty rows 40 cols 80; TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"'
+        shell: 'script -q -e -c "bash {0}"'
+        run: TERM=xterm bundle exec rspec -e"does not run in-game tests if AutoTest is not installed"
 
       - name: Test packaging
         run: bundle exec gem build modsvaskr.gemspec
