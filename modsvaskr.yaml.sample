@@ -18,7 +18,6 @@ games:
     # Timeout between 2 game runs for the player to interrupt testing (defaults to 10)
     # timeout_interrupt_tests_secs: 10
 
-
 # Path where xEdit is installed
 xedit: C:\Programs\SSEEdit 4_0_3-164-4-0-3-1575326827
 
