@@ -148,6 +148,14 @@ This suite tests NPCs by teleporting both the Player and the NPC to a photo-shoo
 
 This suite registers tests by getting xEdit information about which NPCs are being defined by mods. It will register 1 test per NPC having a full name, whatever the mod defining it.
 
+##### NPC Head
+
+This suite is using in-game testing.
+
+This suite tests NPCs by teleporting both the Player and the NPC to a photo-shoot location in a test cell, and taking a screenshot of the head-part of the NPC to be tested, without any inventory. Useful to check for neck seams or gaps.
+
+This suite registers tests by getting xEdit information about which NPCs are being defined by mods. It will register 1 test per NPC having a full name, whatever the mod defining it.
+
 #### Troubleshooting tests execution
 
 Tests execution logs useful information in Modsvaskr logs, which can you read:
