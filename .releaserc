@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    ["@semantic-release/exec", {
+      "analyzeCommitsCmd": "bundle exec sem_ver_git --from \"${lastRelease.gitTag}\" --output semantic_release_analyze | tail -n 1",
+      "generateNotesCmd": "bundle exec sem_ver_git --from \"${lastRelease.gitTag}\" --output semantic_release_generate_notes"
+    }],
+    "@semantic-release/changelog",
+    "semantic-release-rubygem",
+    ["@semantic-release/git", {
+      "assets": [
+        'CHANGELOG.md',
+        'lib/*/version.rb'
+      ],
+      "message": "[Release] ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+    }]
+  ]
+}
