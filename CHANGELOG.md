@@ -1,3 +1,9 @@
+# [v0.1.2](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.1...v0.1.2) (2021-01-19 13:12:44)
+
+### Patches
+
+* [Make sure stdin is flushed before waiting for user input](https://github.com/Muriel-Salvan/modsvaskr/commit/5bd17982bf7f4628eae055639cec5bbcf50336b2)
+
 # [v0.1.1](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.0...v0.1.1) (2021-01-19 10:38:10)
 
 ### Patches
