@@ -1,3 +1,9 @@
+# [v0.1.1](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.0...v0.1.1) (2021-01-19 10:38:10)
+
+### Patches
+
+* [[Fix] When user has status files in its data folder tests are running…](https://github.com/Muriel-Salvan/modsvaskr/commit/2aa9e4a1f1f6d6b2035bbe895e4f0299cd3cddc4)
+
 # [v0.1.0](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.0.4...v0.1.0) (2021-01-18 18:26:59)
 
 ### Patches
