@@ -204,6 +204,8 @@ module Modsvaskr
                 end
               end
               # We will start again. Leave some time to interrupt if we want.
+              # First, flush stdin of any pending character
+              $stdin.getc while !select([$stdin], nil, nil, 2).nil?
               out "We are going to start again in #{@game.timeout_interrupt_tests_secs} seconds. Press Enter now to interrupt it."
               key_pressed =
                 begin
