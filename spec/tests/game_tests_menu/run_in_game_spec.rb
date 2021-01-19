@@ -258,6 +258,54 @@ describe 'Game tests menu' do
         expect_menu_items_to_include('[*] in_game_test_4 - ok - In-game test 4', menu_idx: -4)
       end
 
+      it 'ignores selected in-game tests statuses from tests suites that were not asked' do
+        # This can happen when the user has some in-game test status files in their data directory
+        ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
+          expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
+          {
+            autotestsuite1: %w[autotest_11]
+          }
+        end
+        ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
+          expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
+          expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
+          [
+            ['in_game_test_1', 'ok'],
+            ['in_game_test_2', 'ok'],
+            ['in_game_test_3', 'ok'],
+            ['in_game_test_4', 'ok']
+          ]
+        end
+        mock_in_game_tests_run(
+          expect_tests: {
+            autotestsuite1: %w[autotest_11]
+          },
+          mock_tests_statuses: {
+            autotestsuite1: {
+              'autotest_11' => 'ok'
+            },
+            autotestsuite2: {
+              'autotest_21' => 'ok',
+              'autotest_22' => 'ok'
+            }
+          }
+        )
+        run_modsvaskr(
+          config: @config,
+          # Select all in-game tests
+          keys: %w[KEY_ENTER] +
+            # Run tests
+            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+            # Check tests statuses
+            %w[KEY_HOME d KEY_ESCAPE]
+        )
+        expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
+        expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
+        expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
+        expect_menu_items_to_include('[*] in_game_test_3 - ok - In-game test 3', menu_idx: -4)
+        expect_menu_items_to_include('[*] in_game_test_4 - ok - In-game test 4', menu_idx: -4)
+      end
+
       it 'runs several selected in-game tests from different tests suites with some failures' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
