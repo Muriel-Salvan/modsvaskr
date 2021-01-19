@@ -146,15 +146,18 @@ module Modsvaskr
           # This is a callback called for each in-game test status change.
           # Update the tests results based on what has been run in-game.
           # Find all tests suites that are subscribed to those in-game tests.
-          in_game_tests_subscriptions[in_game_tests_suite].each do |tests_suite_subscription|
-            selected_in_game_tests_statuses = in_game_tests_statuses.slice(*tests_suite_subscription[:in_game_tests])
-            unless selected_in_game_tests_statuses.empty?
-              tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
-              tests_suite.set_statuses(
-                tests_suite.
-                  parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
-                  select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
-              )
+          # Be careful that updates can be given for in-game tests suites we were not expecting
+          if in_game_tests_subscriptions.key?(in_game_tests_suite)
+            in_game_tests_subscriptions[in_game_tests_suite].each do |tests_suite_subscription|
+              selected_in_game_tests_statuses = in_game_tests_statuses.slice(*tests_suite_subscription[:in_game_tests])
+              unless selected_in_game_tests_statuses.empty?
+                tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
+                tests_suite.set_statuses(
+                  tests_suite.
+                    parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
+                    select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
+                )
+              end
             end
           end
         end
