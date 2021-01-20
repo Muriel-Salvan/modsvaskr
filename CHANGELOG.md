@@ -1,3 +1,9 @@
+# [v0.1.3](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.2...v0.1.3) (2021-01-20 11:02:50)
+
+### Patches
+
+* [[#47] [Fix] Don't clear statuses for tests we don't intend to run](https://github.com/Muriel-Salvan/modsvaskr/commit/9422b103509a515806473a382596eaece2a322da)
+
 # [v0.1.2](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.1...v0.1.2) (2021-01-19 13:12:44)
 
 ### Patches
