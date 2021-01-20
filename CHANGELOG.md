@@ -1,3 +1,9 @@
+# [v0.1.7](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.6...v0.1.7) (2021-01-20 11:56:06)
+
+### Patches
+
+* [[#54] No more wait for user to interrupt testing when no_prompt is set](https://github.com/Muriel-Salvan/modsvaskr/commit/cc2ae3d376fa54a037d6ea5fed41a7b1248e3b8b)
+
 # [v0.1.6](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.5...v0.1.6) (2021-01-20 11:49:06)
 
 ### Patches
