@@ -1,3 +1,9 @@
+# [v0.1.4](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.3...v0.1.4) (2021-01-20 11:26:05)
+
+### Patches
+
+* [[#49] Fix waiting for user input that was always skipped](https://github.com/Muriel-Salvan/modsvaskr/commit/eb398fb211dd79c2b9287faf6c4bf3d60f7320f6)
+
 # [v0.1.3](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.2...v0.1.3) (2021-01-20 11:02:50)
 
 ### Patches
