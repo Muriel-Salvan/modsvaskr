@@ -211,21 +211,23 @@ module Modsvaskr
                 end
               end
               # We will start again. Leave some time to interrupt if we want.
-              unless @config.no_prompt
+              if @config.no_prompt
+                out 'Start again automatically as no_prompt has been set.'
+              else
                 # First, flush stdin of any pending character
                 $stdin.getc while !select([$stdin], nil, nil, 2).nil?
-              end
-              out "We are going to start again in #{@game.timeout_interrupt_tests_secs} seconds. Press Enter now to interrupt it."
-              key_pressed =
-                begin
-                  Timeout.timeout(@game.timeout_interrupt_tests_secs) { $stdin.gets }
-                rescue Timeout::Error
-                  nil
+                out "We are going to start again in #{@game.timeout_interrupt_tests_secs} seconds. Press Enter now to interrupt it."
+                key_pressed =
+                  begin
+                    Timeout.timeout(@game.timeout_interrupt_tests_secs) { $stdin.gets }
+                  rescue Timeout::Error
+                    nil
+                  end
+                if key_pressed
+                  log "[ In-game testing #{@game.name} ] - Run interrupted by user."
+                  # TODO: Remove AutoTest start on load: it has been interrupted by the user, so we should not keep it in case the user launches the game by itself.
+                  break
                 end
-              if key_pressed
-                log "[ In-game testing #{@game.name} ] - Run interrupted by user."
-                # TODO: Remove AutoTest start on load: it has been interrupted by the user, so we should not keep it in case the user launches the game by itself.
-                break
               end
             end
           end
