@@ -13,8 +13,16 @@ module ModsvaskrTest
     #
     # Result::
     # * Boolean: Are we in debug mode?
-    def debug?
+    def self.debug?
       ENV['TEST_DEBUG'] == '1'
+    end
+
+    # Are we in debug mode?
+    #
+    # Result::
+    # * Boolean: Are we in debug mode?
+    def debug?
+      ModsvaskrTest::Helpers.debug?
     end
 
     # Dump debug logs
