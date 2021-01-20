@@ -66,8 +66,14 @@ module Modsvaskr
               }
             )
           )
-          # Clear the AutoTest test statuses
-          File.unlink("#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_#{tests_suite}_Statuses.json") if File.exist?("#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_#{tests_suite}_Statuses.json")
+          # Clear the AutoTest test statuses that we are going to run
+          statuses_file = "#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_#{tests_suite}_Statuses.json"
+          if File.exist?(statuses_file)
+            File.write(
+              statuses_file,
+              JSON.pretty_generate('string' => JSON.parse(File.read(statuses_file))['string'].delete_if { |test_name, _test_status| tests.include?(test_name) })
+            )
+          end
         end
         auto_test_config_file = "#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_Config.json"
         # Write the JSON file that contains the configuration of the AutoTest tests runner
