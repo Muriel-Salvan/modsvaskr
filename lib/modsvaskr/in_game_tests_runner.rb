@@ -3,6 +3,7 @@ require 'elder_scrolls_plugin'
 require 'fileutils'
 require 'json'
 require 'time'
+require 'timeout'
 require 'modsvaskr/tests_suite'
 
 module Modsvaskr
@@ -218,7 +219,7 @@ module Modsvaskr
               key_pressed =
                 begin
                   Timeout.timeout(@game.timeout_interrupt_tests_secs) { $stdin.gets }
-                rescue
+                rescue Timeout::Error
                   nil
                 end
               if key_pressed
