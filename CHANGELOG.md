@@ -1,3 +1,9 @@
+# [v0.1.6](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.5...v0.1.6) (2021-01-20 11:49:06)
+
+### Patches
+
+* [[#53] Improve test debugging logs](https://github.com/Muriel-Salvan/modsvaskr/commit/217bb9f417d38b62e1341e0b40ffe9d38b11e680)
+
 # [v0.1.5](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.4...v0.1.5) (2021-01-20 11:42:24)
 
 ### Patches
