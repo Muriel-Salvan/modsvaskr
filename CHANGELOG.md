@@ -1,3 +1,9 @@
+# [v0.1.5](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.4...v0.1.5) (2021-01-20 11:42:24)
+
+### Patches
+
+* [[#51] Make sure in-game test names are treated case-insensitive even …](https://github.com/Muriel-Salvan/modsvaskr/commit/2c059668c346965f3c3a88470952680b5a83ed14)
+
 # [v0.1.4](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.3...v0.1.4) (2021-01-20 11:26:05)
 
 ### Patches
