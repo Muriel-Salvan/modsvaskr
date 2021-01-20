@@ -674,6 +674,69 @@ describe 'Game tests menu' do
         expect_menu_items_to_include('[*] in_game_test_4 - ok - In-game test 4', menu_idx: -4)
       end
 
+      it 'skips in-game tests that keep provoking CTDs with case-insensitive test names' do
+        ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
+          expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
+          { autotestsuite1: %w[AutoTest_1 AutoTest_2 AutoTest_3 AutoTest_4] }
+        end
+        ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
+          expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
+          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+        end
+        # Here we simulate a CTD: autotest_3 and autotest_4 have not been run, and the ending status is still 'run'
+        mock_in_game_tests_run(
+          expect_tests: {
+            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+          },
+          mock_tests_statuses: {
+            autotestsuite1: {
+              # Simulate the Papyrus has output JSON keys with a different case
+              'AutoTest_1' => 'ok',
+              'AutoTest_2' => 'ok'
+            }
+          },
+          mock_tests_execution_end: 'run'
+        )
+        # So we expect another run to be done for remaining in-game tests, but we make it fail at the same test
+        mock_in_game_tests_run(
+          expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
+          expect_tests: {
+            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+          },
+          mock_tests_execution_end: 'run'
+        )
+        # autotest_3 should be marked as failed_ctd, then updating statuses again
+        mock_system_calls [mock_list_storage]
+        # So we expect another run to be done for remaining in-game tests, skipping autotest_3
+        mock_in_game_tests_run(
+          expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
+          expect_tests: {
+            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+          },
+          mock_tests_statuses: {
+            autotestsuite1: {
+              'AutoTest_4' => 'ok'
+            }
+          },
+          mock_tests_execution_end: 'end'
+        )
+        run_modsvaskr(
+          config: @config,
+          # Select all in-game tests
+          keys: %w[KEY_ENTER] +
+            # Run tests
+            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+            # Check tests statuses
+            %w[KEY_HOME d KEY_ESCAPE]
+        )
+        expect_menu_items_to_include('[*] in_game_tests_suite - 3 / 4')
+        expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
+        expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
+        expect_menu_items_to_include('[*] in_game_test_3 - failed_ctd - In-game test 3', menu_idx: -4)
+        expect_menu_items_to_include('[*] in_game_test_4 - ok - In-game test 4', menu_idx: -4)
+      end
+
       it 'detects hung game and restarts it' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
