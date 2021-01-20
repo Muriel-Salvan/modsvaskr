@@ -131,14 +131,15 @@ module Modsvaskr
         in_game_tests.each do |tests_suite, selected_tests|
           in_game_tests_to_subscribe = @tests_suites[tests_suite].in_game_tests_for(selected_tests)
           in_game_tests_to_subscribe.each do |in_game_tests_suite, selected_in_game_tests|
+            selected_in_game_tests_downcase = selected_in_game_tests.map(&:downcase)
             in_game_tests_subscriptions[in_game_tests_suite] = [] unless in_game_tests_subscriptions.key?(in_game_tests_suite)
             in_game_tests_subscriptions[in_game_tests_suite] << {
               tests_suite: tests_suite,
-              in_game_tests: selected_in_game_tests,
+              in_game_tests: selected_in_game_tests_downcase,
               selected_tests: selected_tests
             }
             merged_in_game_tests[in_game_tests_suite] = [] unless merged_in_game_tests.key?(in_game_tests_suite)
-            merged_in_game_tests[in_game_tests_suite] = (merged_in_game_tests[in_game_tests_suite] + selected_in_game_tests).uniq
+            merged_in_game_tests[in_game_tests_suite] = (merged_in_game_tests[in_game_tests_suite] + selected_in_game_tests_downcase).uniq
           end
         end
         in_game_tests_runner = InGameTestsRunner.new(@config, @game)
