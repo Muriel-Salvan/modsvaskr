@@ -21,7 +21,9 @@ module ModsvaskrTest
     # Finalize the curses menu window
     def curses_menu_finalize
       ModsvaskrTest.screenshots << capture_screenshot
-      super
+      result = super
+      puts ModsvaskrTest.screenshots.last.select { |line| !line.strip.empty? }.join("\n") if ModsvaskrTest::Helpers.debug?
+      result
     end
 
     private
