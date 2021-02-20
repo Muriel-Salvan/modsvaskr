@@ -1,3 +1,4 @@
+require 'modsvaskr/encoding'
 require 'modsvaskr/run_cmd'
 
 module Modsvaskr
@@ -45,6 +46,17 @@ module Modsvaskr
         )
         @runs[script] = nil
       end
+    end
+
+    # Parse a CSV that has been dumped by a previous run of xEdit
+    #
+    # Parameters::
+    # * *csv* (String): Name of the CSV file (from Edit Scripts), without .csv
+    # * *row_block* (Proc): Code called for each CSV row
+    #   Parameters::
+    #   * *row* (Array<String>): CSV row
+    def parse_csv(csv, &row_block)
+      CSV.parse(Encoding.to_utf8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&row_block)
     end
 
   end
