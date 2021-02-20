@@ -1,8 +1,20 @@
+require 'modsvaskr/in_game_tests_suite'
+
 module Modsvaskr
 
   module TestsSuites
 
     class Npc < TestsSuite
+
+      include InGameTestsSuite
+
+      # Return the in-game tests suite to which we forward the tests to be run
+      #
+      # Result::
+      # * Symbol: In-game tests suite
+      def in_game_tests_suite
+        :npcs
+      end
 
       # Discover the list of tests information that could be run.
       # [API] - This method is mandatory
@@ -18,30 +30,6 @@ module Modsvaskr
           } if row[1].downcase == 'npc_'
         end
         tests
-      end
-
-      # Get the list of tests to be run in-game for a given list of test names.
-      # [API] - This method is mandatory for tests needing to be run in-game.
-      #
-      # Parameters::
-      # * *tests* (Array<String>): List of test names
-      # Result::
-      # * Hash<Symbol, Array<String> >: List of in-game test names, per in-game tests suite
-      def in_game_tests_for(tests)
-        { npcs: tests }
-      end
-
-      # Set statuses based on the result of AutoTest statuses.
-      # AutoTest names are case insensitive.
-      # [API] - This method is mandatory for tests needing to be run in-game.
-      #
-      # Parameters::
-      # * *tests* (Array<String>): List of test names
-      # * *auto_test_statuses* (Hash<Symbol, Array<[String, String]> >): Ordered list of AutoTest [test name, test status], per AutoTest tests suite
-      # Result::
-      # * Array<[String, String]>: Corresponding list of [test name, test status]
-      def parse_auto_tests_statuses_for(tests, auto_test_statuses)
-        auto_test_statuses.key?(:npcs) ? auto_test_statuses[:npcs] : []
       end
 
     end
