@@ -77,6 +77,5 @@ RSpec.configure do |config|
   end
   config.before(:each) do
     add_test_game_types
-    add_test_tests_suites
   end
 end
