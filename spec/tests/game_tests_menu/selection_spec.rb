@@ -26,6 +26,10 @@ describe 'Game tests menu' do
       end
     end
 
+    before(:each) do
+      set_test_tests_suites(%i[tests_suite in_game_tests_suite])
+    end
+
     it 'selects tests suites' do
       run_modsvaskr(
         config: @config,

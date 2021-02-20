@@ -218,21 +218,159 @@ module ModsvaskrTest
       end
     end
 
-    # Add tests plugins defined only for tests
-    def add_test_tests_suites
+    # Set tests plugins defined only for tests
+    #
+    # Parameters::
+    # * *selected_tests_suites* (Array<Symbol> or nil): Tests that are available for tests, or nil for all tests [default = nil]
+    def set_test_tests_suites(selected_tests_suites = nil)
       allow(Modsvaskr::TestsRunner).to receive(:new).and_wrap_original do |org_new, config, game|
         tests_runner = org_new.call(config, game)
         tests_runner.instance_exec do
-          @tests_suites = Hash[Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
-            require tests_suite_file
-            tests_suite = File.basename(tests_suite_file, '.rb').to_sym
-            [
-              tests_suite,
-              ModsvaskrTest::TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, game)
-            ]
-          end]
+          @tests_suites = @tests_suites.
+            # First add tests suites defined in tests
+            merge(Hash[Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
+              require tests_suite_file
+              tests_suite = File.basename(tests_suite_file, '.rb').to_sym
+              [
+                tests_suite,
+                ModsvaskrTest::TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, game)
+              ]
+            end]).
+            # Then filter them if needed
+            select { |tests_suite, _tests_suite_instance| selected_tests_suites.nil? || selected_tests_suites.include?(tests_suite)}
         end
         tests_runner
+      end
+    end
+
+    # Mock an xEdit dump with a given CSV content
+    #
+    # Parameters::
+    # * *csv* (String): The CSV content
+    def mock_xedit_dump_with(csv)
+      mock_system_calls [
+        ['"SSEEdit.exe" -IKnowWhatImDoing -AllowMasterFilesEdit -SSE -autoload -script:"Modsvaskr_DumpInfo.pas"', proc do
+          expect(File.exist?("#{@xedit_dir}/Edit Scripts/Modsvaskr_DumpInfo.pas")).to eq true
+          # Mock the generation of the CSV
+          File.write("#{@xedit_dir}/Edit Scripts/Modsvaskr_ExportedDumpInfo.csv", csv)
+          true
+        end]
+      ]
+    end
+
+    # Get the mocked command listing storage
+    #
+    # Result::
+    # * [String, Proc]: Mocked command to be used to list storage of the game
+    def mock_list_storage
+      storage_util_dir = "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData"
+      [
+        "dir \"#{storage_util_dir}\" /B",
+        proc { Dir.glob("#{storage_util_dir}/*").map { |f| File.basename(f) }.join("\n") }
+      ]
+    end
+
+    # Mock a game runnning an in-game tests session
+    #
+    # Parameters::
+    # * *expect_game_launch_cmd* (String): Expected game launch command [default: '"game_launcher.exe"']
+    # * *expect_tests* (Hash<Symbol,Array<String>>): Expected list of in-game tests to be run, per in-game tests suite [default: {}]
+    # * *mock_tests_statuses* (Hash<Symbol, Hash<String, String> > or Array): List of (or single) set of in-game tests statuses, per in-game test name, per in-game tests suite [default: {}]
+    # * *mock_tests_execution_end* (String): Status to set at the end of this in-game tests execution [default: 'end']
+    # * *mock_tests_execution_stopped_by_user* (Boolean): If true, the mock an interruption done by the user [default: false]
+    # * *mock_exit_game* (Boolean): If true, then mock that the game exited [default: true]
+    def mock_in_game_tests_run(
+      expect_game_launch_cmd: '"game_launcher.exe"',
+      expect_tests: {},
+      mock_tests_statuses: {},
+      mock_tests_execution_end: 'end',
+      mock_tests_execution_stopped_by_user: false,
+      mock_exit_game: true
+    )
+      mock_tests_statuses = [mock_tests_statuses] unless mock_tests_statuses.is_a?(Array)
+      FileUtils.mkdir_p "#{@game_dir}/Data"
+      autotest_esp = "#{@game_dir}/Data/AutoTest.esp"
+      unless File.exist?(autotest_esp)
+        # Create the AutoTest plugin
+        expect(ElderScrollsPlugin).to receive(:new).with("#{@game_dir}/Data/AutoTest.esp") do
+          mocked_esp = double('AutoTest esp plugin')
+          expect(mocked_esp).to receive(:to_json) do
+            {
+              sub_chunks: [
+                {
+                  decoded_header: {
+                    label: 'QUST'
+                  },
+                  sub_chunks: [
+                    {
+                      sub_chunks: [
+                        {
+                          name: 'EDID',
+                          data: 'AutoTest_ScriptsQuest'
+                        },
+                        {
+                          name: 'VMAD',
+                          data: Base64.encode64(expect_tests.keys.map { |in_game_tests_suite| "AutoTest_Suite_#{in_game_tests_suite}" }.join('|'))
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          end
+          mocked_esp
+        end
+        File.write(autotest_esp, 'Fake AutoTest.esp')
+      end
+      # Create the AutoLoad plugin
+      File.write("#{@game_dir}/Data/AutoLoad.cmd", 'Fake AutoLoad.cmd')
+      # Expect in-game tests run to be setup and mock their run
+      storage_util_dir = "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData"
+      mock_system_calls [
+        # Get AutoTest statuses
+        mock_list_storage,
+        # Launch game
+        [expect_game_launch_cmd, ''],
+        ['tasklist | find "TestGame.exe"', 'TestGame.exe 1107']
+      ]
+      mock_tests_statuses.each.with_index do |mock_tests_statuses_iteration, idx|
+        last_iteration = (idx == mock_tests_statuses.size - 1)
+        mock_system_calls [
+          # Check if running
+          # If it is the last iteration, consider it has exited normally
+          ['tasklist | find "TestGame.exe"', last_iteration && mock_exit_game ? '' : 'TestGame.exe 1107'],
+          # Get AutoTest statuses
+          [mock_list_storage[0], proc do
+            # Check that we ask to run the correct tests
+            expect(Dir.glob("#{storage_util_dir}/AutoTest_*_Run.json").map { |f| File.basename(f).downcase }.sort).to eq(
+              expect_tests.keys.map { |in_game_tests_suite| "autotest_#{in_game_tests_suite}_run.json" }.sort
+            )
+            expect_tests.each do |in_game_tests_suite, in_game_tests|
+              expect(JSON.parse(File.read("#{storage_util_dir}/AutoTest_#{in_game_tests_suite}_Run.json"))).to eq(
+                'stringList' => {
+                  'tests_to_run' => in_game_tests
+                }
+              )
+            end
+            # Here we mock test statuses
+            FileUtils.mkdir_p storage_util_dir
+            mock_tests_statuses_iteration.each do |in_game_tests_suite, in_game_tests_statuses|
+              statuses_file = "#{storage_util_dir}/AutoTest_#{in_game_tests_suite}_Statuses.json"
+              File.write(
+                statuses_file,
+                { string: (File.exist?(statuses_file) ? JSON.parse(File.read(statuses_file))['string'] : {}).merge(in_game_tests_statuses) }.to_json
+              )
+            end
+            # If it is the last iteration, mock ending the tests session
+            if last_iteration
+              config = { tests_execution: mock_tests_execution_end }
+              config[:stopped_by] = 'user' if mock_tests_execution_stopped_by_user
+              File.write("#{storage_util_dir}/AutoTest_Config.json", { string: config }.to_json)
+            end
+            mock_list_storage[1].call
+          end]
+        ]
       end
     end
 

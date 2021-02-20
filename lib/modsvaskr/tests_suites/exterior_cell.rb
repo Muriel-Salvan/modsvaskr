@@ -45,7 +45,7 @@ module Modsvaskr
         # Test only exterior cells that have been changed by mods, and make sure we test the minimum, knowing that each cell loaded in game tests 5x5 cells around
         vanilla_esps = @game.game_esps
         vanilla_exterior_cells = vanilla_esps.inject({}) do |merged_worldspaces, esp_name|
-          merged_worldspaces.merge(exterior_cells[esp_name]) do |worldspace, ext_cells1, ext_cells2|
+          merged_worldspaces.merge(exterior_cells[esp_name] || {}) do |worldspace, ext_cells1, ext_cells2|
             (ext_cells1 + ext_cells2).sort.uniq
           end
         end
@@ -87,7 +87,7 @@ module Modsvaskr
                   slice(*(candidate_cell_x - delta_cells..candidate_cell_x + delta_cells)).
                   inject(0) { |sum_cells, (_cur_cell_x, cur_cell_ys)| sum_cells + cur_cell_ys.slice(*(candidate_cell_y - delta_cells..candidate_cell_y + delta_cells)).size }
                 if best_cell_score.nil? || nbr_tested_cells > best_cell_score
-                  nbr_tested_cells = best_cell_score
+                  best_cell_score = nbr_tested_cells
                   best_cell_x = candidate_cell_x
                   best_cell_y = candidate_cell_y
                 end
