@@ -1,3 +1,9 @@
+# [v0.1.8](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.7...v0.1.8) (2021-02-20 19:56:58)
+
+### Patches
+
+* [Make sure in-game test names are matched case-insensitive](https://github.com/Muriel-Salvan/modsvaskr/commit/f040f88019b229d8cf59e3f3847a152d95efd23c)
+
 # [v0.1.7](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.6...v0.1.7) (2021-01-20 11:56:06)
 
 ### Patches
