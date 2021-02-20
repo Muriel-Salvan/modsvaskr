@@ -26,7 +26,7 @@ module Modsvaskr
         # Hash< String, Hash< String, Array<[Integer, Integer]> > >
         exterior_cells = {}
         @game.xedit.run_script('DumpInfo', only_once: true)
-        CSV.read("#{@game.xedit.install_path}/Edit Scripts/Modsvaskr_ExportedDumpInfo.csv", encoding: 'windows-1251:utf-8').each do |row|
+        @game.xedit.parse_csv('Modsvaskr_ExportedDumpInfo') do |row|
           esp_name, record_type = row[0..1]
           if record_type.downcase == 'cell'
             cell_type, cell_name, cell_x, cell_y = row[3..6]

@@ -24,7 +24,7 @@ module Modsvaskr
       def discover_tests
         tests = {}
         @game.xedit.run_script('DumpInfo', only_once: true)
-        CSV.read("#{@game.xedit.install_path}/Edit Scripts/Modsvaskr_ExportedDumpInfo.csv", encoding: 'windows-1251:utf-8').each do |row|
+        @game.xedit.parse_csv('Modsvaskr_ExportedDumpInfo') do |row|
           tests["#{row[0].downcase}/#{row[2].to_i(16)}"] = {
             name: "Take screenshot of #{row[0]} - #{row[3]}"
           } if row[1].downcase == 'npc_'
