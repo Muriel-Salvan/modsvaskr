@@ -1,3 +1,10 @@
+# [v0.1.9](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.8...v0.1.9) (2021-02-21 18:27:48)
+
+### Patches
+
+* [Exterior cells now group cells correctly](https://github.com/Muriel-Salvan/modsvaskr/commit/494f9a368745584cde0e4dd8ffb783c0bc8c094d)
+* [Improve CSV parsing, especially when encoding is not UTF-8](https://github.com/Muriel-Salvan/modsvaskr/commit/67c5861400d58a0619b1eafd219d7b7712e8c4ce)
+
 # [v0.1.8](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.7...v0.1.8) (2021-02-20 19:56:58)
 
 ### Patches
