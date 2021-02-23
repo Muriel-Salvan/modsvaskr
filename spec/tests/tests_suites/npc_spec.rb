@@ -56,7 +56,7 @@ describe 'Game tests menu' do
           "test_game.esm",NPC_,00014137,Angrenor Once-Honored
         EOS
         expect_menu_items_to_include('[+] npc - 0 / 1')
-        expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of test_game.esm - Angrenor Once-Honored', menu_idx: -4)
+        expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of Angrenor Once-Honored - test_game.esm', menu_idx: -4)
       end
 
       it 'discovers 1 test having non-ASCI characters' do
@@ -64,9 +64,25 @@ describe 'Game tests menu' do
           "test_game.esm",NPC_,00014137,フォートサンガード
         EOS
         expect_menu_items_to_include('[+] npc - 0 / 1')
-        expect_menu_items_to_include(/\[ \] test_game.esm\/82231 -  - Take screenshot of test_game.esm - .+/, menu_idx: -4)
+        expect_menu_items_to_include(/\[ \] test_game.esm\/82231 -  - Take screenshot of .+ - test_game.esm/, menu_idx: -4)
         # TODO: Use the following when ncurses will handle UTF-8 properly
-        # expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of test_game.esm - フォートサンガード', menu_idx: -4)
+        # expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of フォートサンガード - test_game.esm', menu_idx: -4)
+      end
+
+      it 'discovers 1 test per NPC even when mods modify the same NPC' do
+        discover_with <<~EOS
+          "test_game.esm",NPC_,00014131,Angrenor1
+          "test_game.esm",NPC_,00014132,Angrenor2
+          "mod1.esp",NPC_,00014131,Angrenor1
+          "mod2.esp",NPC_,00014131,Angrenor1
+          "mod2.esp",NPC_,00014132,Angrenor2
+          "mod3.esp",NPC_,04014133,Angrenor3
+          "mod4.esp",NPC_,04014133,Angrenor3
+        EOS
+        expect_menu_items_to_include('[+] npc - 0 / 3')
+        expect_menu_items_to_include('[ ] test_game.esm/82225 -  - Take screenshot of Angrenor1 - test_game.esm/mod1.esp/mod2.esp', menu_idx: -4)
+        expect_menu_items_to_include('[ ] test_game.esm/82226 -  - Take screenshot of Angrenor2 - test_game.esm/mod2.esp', menu_idx: -4)
+        expect_menu_items_to_include('[ ] mod3.esp/82227 -  - Take screenshot of Angrenor3 - mod3.esp/mod4.esp', menu_idx: -4)
       end
 
       it 'ignores other data dump when discovering tests' do
@@ -78,7 +94,7 @@ describe 'Game tests menu' do
           "mod1.esp",CELL,0001AB5F,coc,FortSungard03
         EOS
         expect_menu_items_to_include('[+] npc - 0 / 1')
-        expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of test_game.esm - Angrenor Once-Honored', menu_idx: -4)
+        expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of Angrenor Once-Honored - test_game.esm', menu_idx: -4)
       end
 
       it 'runs in-game tests NPCs' do

@@ -51,6 +51,20 @@ module ModsvaskrTest
         ]
       end
 
+      # Get the load order.
+      # [API] - This method is mandatory
+      #
+      # Result::
+      # * Array<String>: List of all active plugins, including masters
+      def load_order
+        game_esps + %w[
+          mod1.esp
+          mod2.esp
+          mod3.esp
+          mod4.esp
+        ]
+      end
+
     end
 
   end

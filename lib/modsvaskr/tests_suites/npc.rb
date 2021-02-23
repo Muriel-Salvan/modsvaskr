@@ -25,9 +25,19 @@ module Modsvaskr
         tests = {}
         @game.xedit.run_script('DumpInfo', only_once: true)
         @game.xedit.parse_csv('Modsvaskr_ExportedDumpInfo') do |row|
-          tests["#{row[0].downcase}/#{row[2].to_i(16)}"] = {
-            name: "Take screenshot of #{row[0]} - #{row[3]}"
-          } if row[1].downcase == 'npc_'
+          if row[1].downcase == 'npc_'
+            # Know from which mod this ID comes from
+            plugin, base_form_id = @game.decode_form_id(row[2])
+            test_name = "#{plugin}/#{base_form_id}"
+            if tests.key?(test_name)
+              # Add the name of the mod to the description, so that we know which mod modifies which NPC.
+              tests[test_name][:name] << "/#{row[0].downcase}"
+            else
+              tests[test_name] = {
+                name: "Take screenshot of #{row[3]} - #{row[0].downcase}"
+              }
+            end
+          end
         end
         tests
       end

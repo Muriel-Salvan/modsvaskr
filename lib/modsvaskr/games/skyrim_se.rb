@@ -37,7 +37,9 @@ module Modsvaskr
         'SkyrimSE.exe'
       end
 
-      # List of default esps present in the game (the ones in the Data folder when 0 mod is being used)
+      # Ordered list of default esps present in the game (the ones in the Data folder when 0 mod is being used).
+      # The list is ordered according to the game's load order.
+      # [API] - This method is mandatory
       #
       # Result::
       # * Array<String>: List of esp/esm/esl base file names.
@@ -49,6 +51,18 @@ module Modsvaskr
           hearthfires.esm
           dragonborn.esm
         ]
+      end
+
+      # Get the load order.
+      # [API] - This method is mandatory
+      #
+      # Result::
+      # * Array<String>: List of all active plugins, including masters
+      def load_order
+        game_esps +
+          File.read("#{ENV['USERPROFILE']}/AppData/Local/Skyrim Special Edition/plugins.txt").split("\n").map do |line|
+            line =~ /^\*(.+)$/ ? $1.downcase : nil
+          end.compact
       end
 
       private
