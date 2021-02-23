@@ -1,4 +1,3 @@
-require 'csv'
 require 'curses_menu'
 require 'modsvaskr/logger'
 require 'modsvaskr/tests_runner'

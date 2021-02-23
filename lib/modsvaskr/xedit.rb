@@ -1,3 +1,4 @@
+require 'csv'
 require 'modsvaskr/encoding'
 require 'modsvaskr/run_cmd'
 
