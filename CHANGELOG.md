@@ -1,3 +1,9 @@
+# [v0.1.10](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.9...v0.1.10) (2021-02-23 20:22:53)
+
+### Patches
+
+* [Make sure NPC tests don't duplicate tests when mods modify NPCs](https://github.com/Muriel-Salvan/modsvaskr/commit/512467c2518180add3e7d389846729e01b9e3092)
+
 # [v0.1.9](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.8...v0.1.9) (2021-02-21 18:27:48)
 
 ### Patches
