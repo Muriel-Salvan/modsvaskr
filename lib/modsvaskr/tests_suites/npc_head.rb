@@ -1,12 +1,10 @@
-require 'modsvaskr/in_game_tests_suite'
+require 'modsvaskr/tests_suites/npc'
 
 module Modsvaskr
 
   module TestsSuites
 
-    class NpcHead < TestsSuite
-
-      include InGameTestsSuite
+    class NpcHead < TestsSuites::Npc
 
       # Return the in-game tests suite to which we forward the tests to be run
       #
@@ -22,22 +20,9 @@ module Modsvaskr
       # Result::
       # * Hash< String, Hash<Symbol,Object> >: Ordered hash of test information, per test name
       def discover_tests
-        tests = {}
-        @game.xedit.run_script('DumpInfo', only_once: true)
-        @game.xedit.parse_csv('Modsvaskr_ExportedDumpInfo') do |row|
-          if row[1].downcase == 'npc_'
-            # Know from which mod this ID comes from
-            plugin, base_form_id = @game.decode_form_id(row[2])
-            test_name = "#{plugin}/#{base_form_id}"
-            if tests.key?(test_name)
-              # Add the name of the mod to the description, so that we know which mod modifies which NPC.
-              tests[test_name][:name] << "/#{row[0].downcase}"
-            else
-              tests[test_name] = {
-                name: "Take head screenshot of #{row[3]} - #{row[0].downcase}"
-              }
-            end
-          end
+        tests = super
+        tests.values.each do |test_info|
+          test_info[:name].gsub!('Take screenshot', 'Take head screenshot')
         end
         tests
       end

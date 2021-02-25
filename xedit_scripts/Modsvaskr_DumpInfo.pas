@@ -20,6 +20,9 @@ end;
 function Process(e: IInterface): integer;
 var
   worldElement : IwbContainer;
+  modFile : IwbFile;
+  idxMaster : integer;
+  masters : string;
 begin
   // AddMessage('Processing: ' + FullPath(e));
   if Signature(e) = 'CELL' then begin
@@ -54,6 +57,16 @@ begin
       Signature(e) + ',' +
       IntToHex(FixedFormID(e), 8) + ',' +
       GetElementEditValues(e, 'FULL')
+    );
+  end else if (Signature(e) = 'TES4') then begin
+    modFile := GetFile(e);
+    masters := '';
+    for idxMaster := 0 to MasterCount(modFile) - 1 do
+      masters := masters + ',' + GetFileName(MasterByIndex(modFile, idxMaster));
+    slCsv.Add(
+      '"' + GetFileName(GetFile(e)) + '",' +
+      Signature(e) + ',' +
+      masters
     );
   end;
   Result := 0;
