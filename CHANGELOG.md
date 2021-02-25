@@ -1,3 +1,9 @@
+# [v0.1.11](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.10...v0.1.11) (2021-02-25 10:53:19)
+
+### Patches
+
+* [Fix parsing NPCs FormIDs for non-master plugins](https://github.com/Muriel-Salvan/modsvaskr/commit/b3df3f71a38baa67fab6b431db262dceeec87643)
+
 # [v0.1.10](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.9...v0.1.10) (2021-02-23 20:22:53)
 
 ### Patches
