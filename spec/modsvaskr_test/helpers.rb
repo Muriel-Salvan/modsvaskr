@@ -103,7 +103,7 @@ module ModsvaskrTest
       menu_idx = -1 if menu_idx.nil?
       expect(ModsvaskrTest.screenshots.size).to be > 0
       error_msg_proc = proc do
-        <<~EOS
+        <<~EO_ERROR_MESSAGE
           Expected menu ##{menu_idx} to have item "#{line}", but got this instead:
           #{
             ModsvaskrTest.screenshots[menu_idx][3..-3].map do |line|
@@ -111,7 +111,7 @@ module ModsvaskrTest
               stripped_line.empty? ? nil : stripped_line
             end.compact.join("\n")
           }
-        EOS
+        EO_ERROR_MESSAGE
       end
       if line.is_a?(Regexp)
         expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to eq(true), error_msg_proc

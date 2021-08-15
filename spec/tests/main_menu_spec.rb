@@ -15,12 +15,12 @@ describe 'Main menu' do
       [
         [
           'gem list modsvaskr --remote',
-          <<~EOS
+          <<~EO_STDOUT
 
             *** REMOTE GEMS ***
 
             modsvaskr (999.1.0)
-          EOS
+          EO_STDOUT
         ]
       ],
       add_init_mocks: false
