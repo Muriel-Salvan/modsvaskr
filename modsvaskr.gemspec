@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary = 'Stronghold for mods acting like companions: The Modsvaskr'
   spec.description = 'Command-line UI handling a full Mods\' ecosystem for Bethesda\'s games.'
   spec.homepage = 'https://github.com/Muriel-Salvan/modsvaskr'
-  spec.license = 'BSD-3-Clause'
+  spec.required_ruby_version = '>= 2.6'
 
   spec.files = Dir['{bin,lib,xedit_scripts}/**/*']
   Dir['bin/**/*'].each do |exec_name|
