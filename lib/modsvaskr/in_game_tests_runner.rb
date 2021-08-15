@@ -54,7 +54,7 @@ module Modsvaskr
     def run(selected_tests)
       unknown_tests_suites = selected_tests.keys - @available_tests_suites
       log "[ In-game testing #{@game.name} ] - !!! The following in-game tests suites are not supported: #{unknown_tests_suites.join(', ')}" unless unknown_tests_suites.empty?
-      tests_to_run = selected_tests.select { |tests_suite, _tests| !unknown_tests_suites.include?(tests_suite) }
+      tests_to_run = selected_tests.reject { |tests_suite, _tests| unknown_tests_suites.include?(tests_suite) }
       unless tests_to_run.empty?
         FileUtils.mkdir_p "#{@game.path}/Data/SKSE/Plugins/StorageUtilData"
         tests_to_run.each do |tests_suite, tests|
@@ -147,7 +147,7 @@ module Modsvaskr
             else
               log "[ In-game testing #{@game.name} ] - First test to run should be #{first_tests_suite_to_run} / #{first_test_to_run}."
               # Launch the game to execute AutoTest
-              @game.launch(autoload: idx_launch == 0 ? false : 'auto_test')
+              @game.launch(autoload: idx_launch.zero? ? false : 'auto_test')
               idx_launch += 1
               log "[ In-game testing #{@game.name} ] - Start monitoring in-game testing..."
               last_time_tests_changed = Time.now
@@ -171,11 +171,11 @@ module Modsvaskr
               # Careful as this JSON file can be written by Papyrus that treat strings as case insensitive.
               # cf. https://github.com/xanderdunn/skaar/wiki/Common-Tasks
               auto_test_config = JSON.parse(File.read(auto_test_config_file))['string'].map { |key, value| [key.downcase, value.downcase] }.to_h
-              if auto_test_config.dig('stopped_by') == 'user'
+              if auto_test_config['stopped_by'] == 'user'
                 log "[ In-game testing #{@game.name} ] - Tests have been stopped by user."
                 break
               end
-              if auto_test_config.dig('tests_execution') == 'end'
+              if auto_test_config['tests_execution'] == 'end'
                 log "[ In-game testing #{@game.name} ] - Tests have finished running."
                 break
               end

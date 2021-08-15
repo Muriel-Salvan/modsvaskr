@@ -23,7 +23,7 @@ module ModsvaskrTest
     def curses_menu_finalize
       result = super
       ModsvaskrTest.screenshots << @screenshot.map { |line| line.map { |char_info| char_info[:char] }.join }
-      puts ModsvaskrTest.screenshots.last.select { |line| !line.strip.empty? }.join("\n") if ModsvaskrTest::Helpers.debug?
+      puts ModsvaskrTest.screenshots.last.reject { |line| line.strip.empty? }.join("\n") if ModsvaskrTest::Helpers.debug?
       result
     end
 

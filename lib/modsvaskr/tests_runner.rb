@@ -179,7 +179,7 @@ module Modsvaskr
             JSON.parse(File.read(@tests_info_file)).map do |tests_suite_str, tests_suite_info|
               [
                 tests_suite_str.to_sym,
-                tests_suite_info.map { |test_name, test_info| [test_name, test_info.transform_keys(&:to_sym)] }.to_h
+                tests_suite_info.transform_values { |test_info| test_info.transform_keys(&:to_sym) }
               ]
             end.to_h
           else

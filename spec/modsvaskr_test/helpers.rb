@@ -70,7 +70,7 @@ module ModsvaskrTest
         log_debug "Run Modsvaskr with test config:\n#{File.read(config_file)}\n"
         Modsvaskr::Ui.new(config: Modsvaskr::Config.new(config_file)).run
         @last_logs = File.read(Modsvaskr::Logger.log_file).split("\n")
-        client_code.call unless client_code.nil?
+        client_code&.call
       end
     end
 
@@ -388,7 +388,7 @@ module ModsvaskrTest
       expected_cmd, mocked_syscall = @remaining_expected_syscalls.shift
       raise "No more system calls were expected, but received a call to system #{cmd}" if expected_cmd.nil?
       # Check that we wanted this particular command to be mocked
-      raise "Expected system call #{expected_cmd}, but received a call to system #{cmd}" if (expected_cmd.is_a?(Regexp) && !(cmd =~ expected_cmd)) || (expected_cmd.is_a?(String) && cmd != expected_cmd)
+      raise "Expected system call #{expected_cmd}, but received a call to system #{cmd}" if (expected_cmd.is_a?(Regexp) && cmd !~ expected_cmd) || (expected_cmd.is_a?(String) && cmd != expected_cmd)
 
       # We're good. mock it.
       mocked_result = mocked_syscall.is_a?(Proc) ? mocked_syscall.call(cmd) : mocked_syscall

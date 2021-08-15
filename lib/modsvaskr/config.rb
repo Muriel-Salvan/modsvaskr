@@ -12,7 +12,7 @@ module Modsvaskr
     # Parameters::
     # * *file* (String): File containing configuration
     def initialize(file)
-      @config = YAML.load(File.read(file)) || {}
+      @config = YAML.safe_load(File.read(file)) || {}
       # Parse all game types plugins
       # Hash<Symbol, Class>
       @game_types = Dir.glob("#{__dir__}/games/*.rb").map do |game_type_file|

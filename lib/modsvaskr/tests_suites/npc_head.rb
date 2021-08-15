@@ -21,7 +21,7 @@ module Modsvaskr
       # * Hash< String, Hash<Symbol,Object> >: Ordered hash of test information, per test name
       def discover_tests
         tests = super
-        tests.values.each do |test_info|
+        tests.each_value do |test_info|
           test_info[:name].gsub!('Take screenshot', 'Take head screenshot')
         end
         tests

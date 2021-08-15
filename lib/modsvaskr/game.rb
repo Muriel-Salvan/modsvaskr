@@ -134,7 +134,7 @@ module Modsvaskr
         log "[ Game #{name} ] - #{running_exe} is not running. Wait for its startup..."
         sleep 1
       end
-      @pid = Integer(tasklist_stdout.split(' ')[1])
+      @pid = Integer(tasklist_stdout.split[1])
       log "[ Game #{name} ] - #{running_exe} has started with PID #{@pid}"
     end
 
@@ -152,7 +152,7 @@ module Modsvaskr
           running = !tasklist_stdout.empty?
           # log "[ Game #{name} ] - Tasklist returned no #{running_exe}:\n#{tasklist_stdout}" unless running
         rescue Errno::ESRCH
-          log "[ Game #{name} ] - Got error while waiting for #{running_exe} PID #{@pid}: #{$!}"
+          log "[ Game #{name} ] - Got error while waiting for #{running_exe} PID #{@pid}: #{$ERROR_INFO}"
           running = false
         end
         @pid = nil unless running

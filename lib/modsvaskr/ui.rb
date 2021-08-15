@@ -1,3 +1,4 @@
+require 'English'
 require 'curses_menu'
 require 'modsvaskr/logger'
 require 'modsvaskr/tests_runner'
@@ -125,7 +126,7 @@ module Modsvaskr
                     :menu_refresh
                   end
                   test_menu.item 'Register tests from selected test suites' do
-                    selected_tests_suites.keys.each do |tests_suite|
+                    selected_tests_suites.each_key do |tests_suite|
                       tests_runner.set_statuses_for(
                         tests_suite,
                         (
@@ -137,7 +138,7 @@ module Modsvaskr
                     :menu_refresh
                   end
                   test_menu.item 'Unregister tests from selected test suites' do
-                    selected_tests_suites.keys.each do |tests_suite|
+                    selected_tests_suites.each_key do |tests_suite|
                       tests_runner.clear_tests_for(tests_suite)
                     end
                     :menu_refresh
@@ -192,7 +193,7 @@ module Modsvaskr
         end
       end
     rescue
-      log "Unhandled exception: #{$!}\n#{$!.backtrace.join("\n")}"
+      log "Unhandled exception: #{$ERROR_INFO}\n#{$ERROR_INFO.backtrace.join("\n")}"
       raise
     ensure
       log 'Close Modsvaskr UI'

@@ -36,7 +36,7 @@ module Modsvaskr
           when 'npc_'
             npcs << [row[0].downcase, row[2].to_i(16), row[3]]
           when 'tes4'
-            masters[row[0].downcase] = row[3..-1].map(&:downcase)
+            masters[row[0].downcase] = row[3..].map(&:downcase)
           end
         end
         npcs.each do |(esp, form_id, npc_name)|
