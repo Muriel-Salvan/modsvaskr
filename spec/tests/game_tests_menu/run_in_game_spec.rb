@@ -57,7 +57,7 @@ describe 'Game tests menu' do
       expect_logs_to_include(%r{Missing file #{Regexp.escape(@game_dir)}/Data/AutoTest\.esp\. In-game tests will be disabled\. Please install the AutoTest mod\.})
     end
 
-    context 'running in-game tests' do
+    context 'when running in-game tests' do
 
       it 'runs 1 selected in-game test' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
