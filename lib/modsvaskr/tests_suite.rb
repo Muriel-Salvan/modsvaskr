@@ -8,7 +8,8 @@ module Modsvaskr
   # Common functionality for any tests suite
   class TestsSuite
 
-    include Logger, RunCmd
+    include RunCmd
+    include Logger
 
     # Constructor
     #

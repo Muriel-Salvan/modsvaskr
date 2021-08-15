@@ -41,9 +41,11 @@ module Modsvaskr
         end
         npcs.each do |(esp, form_id, npc_name)|
           raise "Esp #{esp} declares NPC FormID #{form_id} (#{npc_name}) but its masters could not be parsed" unless masters.key?(esp)
+
           # Know from which mod this ID comes from
           mod_idx = form_id / 16_777_216
           raise "NPC FormID #{form_id} (#{npc_name}) from #{esp} references an unknown master (known masters: #{masters[esp].join(', ')})" if mod_idx > masters[esp].size
+
           test_name = "#{mod_idx == masters[esp].size ? esp : masters[esp][mod_idx]}/#{form_id % 16_777_216}"
           if tests.key?(test_name)
             # Add the name of the mod to the description, so that we know which mod modifies which NPC.

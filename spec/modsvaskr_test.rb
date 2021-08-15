@@ -32,12 +32,14 @@ module ModsvaskrTest
 end
 
 class CursesMenu
+
   prepend ModsvaskrTest::CursesMenuPatch
+
 end
 
 RSpec.configure do |config|
   config.include ModsvaskrTest::Helpers
-  config.around(:each) do |example|
+  config.around do |example|
     # Initialize all variables to ensure tests independence
     ModsvaskrTest.screenshots = []
     ModsvaskrTest::Games::TestGame.init_proc = nil
@@ -54,7 +56,7 @@ RSpec.configure do |config|
     example.run
     expect(@remaining_expected_syscalls || []).to eq []
   end
-  config.before(:each) do
+  config.before do
     add_test_game_types
   end
 end

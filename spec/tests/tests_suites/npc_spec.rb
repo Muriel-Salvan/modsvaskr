@@ -4,11 +4,11 @@ describe 'Game tests menu' do
 
     context 'npc' do
 
-      around(:each) do |example|
+      around do |example|
         # Register the key sequence getting to the desired menu
         entering_menu_keys %w[KEY_ENTER KEY_ENTER]
         exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
-        menu_index_to_test -3
+        menu_index_to_test(-3)
         with_tmp_dir('test_game') do |game_dir|
           @game_dir = game_dir
           with_tmp_dir('xedit') do |xedit_dir|
@@ -33,7 +33,7 @@ describe 'Game tests menu' do
         end
       end
 
-      before(:each) do
+      before do
         set_test_tests_suites([:npc])
       end
 
@@ -66,7 +66,7 @@ describe 'Game tests menu' do
           "test_game.esm",TES4,
         EO_CSV
         expect_menu_items_to_include('[+] npc - 0 / 1')
-        expect_menu_items_to_include(/\[ \] test_game.esm\/82231 -  - Take screenshot of .+ - test_game.esm/, menu_idx: -4)
+        expect_menu_items_to_include(%r{\[ \] test_game.esm/82231 -  - Take screenshot of .+ - test_game.esm}, menu_idx: -4)
         # TODO: Use the following when ncurses will handle UTF-8 properly
         # expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of フォートサンガード - test_game.esm', menu_idx: -4)
       end

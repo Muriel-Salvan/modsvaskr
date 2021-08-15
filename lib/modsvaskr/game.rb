@@ -7,7 +7,8 @@ module Modsvaskr
   # Common functionality for any Game
   class Game
 
-    include Logger, RunCmd
+    include RunCmd
+    include Logger
 
     # Constructor
     #
@@ -32,7 +33,7 @@ module Modsvaskr
       }.merge(game_info)
       @name = name
       @pid = nil
-      init if self.respond_to?(:init)
+      init if respond_to?(:init)
     end
 
     # Return the game name
@@ -103,20 +104,24 @@ module Modsvaskr
         log "[ Game #{name} ] - Launch game (##{@idx_launch}) using AutoLoad #{autoload}..."
         autoload_file = "#{path}/Data/AutoLoad.cmd"
         if File.exist?(autoload_file)
-          run_cmd({
-            dir: path,
-            exe: 'Data\AutoLoad.cmd',
-            args: [autoload]
-          })
+          run_cmd(
+            {
+              dir: path,
+              exe: 'Data\AutoLoad.cmd',
+              args: [autoload]
+            }
+          )
         else
           log "[ Game #{name} ] - Missing file #{autoload_file}. Can't use AutoLoad to load game automatically. Please install the AutoLoad mod."
         end
       else
         log "[ Game #{name} ] - Launch game (##{@idx_launch}) using configured launcher (#{launch_exe})..."
-        run_cmd({
-          dir: path,
-          exe: launch_exe
-        })
+        run_cmd(
+          {
+            dir: path,
+            exe: launch_exe
+          }
+        )
       end
       @idx_launch += 1
       # The game launches asynchronously, so just wait a little bit and check for the process existence
@@ -125,6 +130,7 @@ module Modsvaskr
       loop do
         tasklist_stdout = `tasklist | find "#{running_exe}"`.strip
         break unless tasklist_stdout.empty?
+
         log "[ Game #{name} ] - #{running_exe} is not running. Wait for its startup..."
         sleep 1
       end
@@ -160,7 +166,7 @@ module Modsvaskr
     def kill
       if @pid
         first_time = true
-        while @pid do
+        while @pid
           system "taskkill #{first_time ? '' : '/F '}/pid #{@pid}"
           first_time = false
           sleep 1
@@ -196,7 +202,6 @@ module Modsvaskr
       form_id = form_id.to_i(16) if form_id.is_a?(String)
       [get_load_order[form_id / 16_777_216], form_id % 16_777_216]
     end
-
 
   end
 

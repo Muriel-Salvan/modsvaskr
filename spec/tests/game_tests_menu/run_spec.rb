@@ -2,13 +2,13 @@ describe 'Game tests menu' do
 
   context 'checking tests run' do
 
-    around(:each) do |example|
+    around do |example|
       # Register the key sequence getting to the desired menu
       entering_menu_keys %w[KEY_ENTER KEY_ENTER] +
         # Discover tests
         %w[KEY_ENTER KEY_DOWN KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER KEY_HOME]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
-      menu_index_to_test -3
+      menu_index_to_test(-3)
       with_tmp_dir('test_game') do |game_dir|
         @game_dir = game_dir
         @config = {
@@ -33,7 +33,7 @@ describe 'Game tests menu' do
       end
     end
 
-    before(:each) do
+    before do
       set_test_tests_suites(%i[tests_suite in_game_tests_suite])
     end
 

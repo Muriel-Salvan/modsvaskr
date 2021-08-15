@@ -61,7 +61,7 @@ module Modsvaskr
       def load_order
         game_esps +
           File.read("#{ENV['USERPROFILE']}/AppData/Local/Skyrim Special Edition/plugins.txt").split("\n").map do |line|
-            line =~ /^\*(.+)$/ ? $1.downcase : nil
+            line =~ /^\*(.+)$/ ? Regexp.last_match(1).downcase : nil
           end.compact
       end
 

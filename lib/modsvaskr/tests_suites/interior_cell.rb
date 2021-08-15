@@ -40,7 +40,7 @@ module Modsvaskr
         # Test only interior cells that have been changed by mods
         vanilla_esps = @game.game_esps
         vanilla_interior_cells = vanilla_esps.map { |esp_name| interior_cells[esp_name] || [] }.flatten.sort.uniq
-        Hash[interior_cells.
+        interior_cells.
           map { |esp_name, esp_cells| vanilla_esps.include?(esp_name) ? [] : vanilla_interior_cells & esp_cells }.
           flatten.
           sort.
@@ -52,8 +52,7 @@ module Modsvaskr
                 name: "Load cell #{cell_name}"
               }
             ]
-          end
-        ]
+          end.to_h
       end
 
     end

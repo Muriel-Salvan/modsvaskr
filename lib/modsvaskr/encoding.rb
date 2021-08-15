@@ -21,6 +21,7 @@ module Modsvaskr
         str.force_encoding(orig_encoding)
       end
       raise "Unknown encoding for string #{str[0..127].inspect}" if encoding.nil?
+
       str.encode('UTF-8', encoding)
     end
 

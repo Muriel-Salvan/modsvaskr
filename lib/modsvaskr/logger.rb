@@ -4,8 +4,9 @@ module Modsvaskr
   module Logger
 
     class << self
-      attr_accessor :log_file
-      attr_accessor :stdout_io
+
+      attr_accessor :log_file, :stdout_io
+
     end
     @log_file = File.expand_path('Modsvaskr.log')
     @stdout_io = $stdout

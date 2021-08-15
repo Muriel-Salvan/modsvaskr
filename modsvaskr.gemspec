@@ -4,7 +4,6 @@ require 'date'
 Gem::Specification.new do |spec|
   spec.name = 'modsvaskr'
   spec.version = Modsvaskr::VERSION
-  spec.date = Date.today.to_s
   spec.authors = ['Muriel Salvan']
   spec.email = ['muriel@x-aeon.com']
   spec.license = 'BSD-3-Clause'

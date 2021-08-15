@@ -2,13 +2,13 @@ describe 'Game tests menu' do
 
   context 'checking in-game test run' do
 
-    around(:each) do |example|
+    around do |example|
       # Register the key sequence getting to the desired menu
       entering_menu_keys %w[KEY_ENTER KEY_ENTER] +
         # Discover tests
         %w[KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER KEY_HOME]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
-      menu_index_to_test -3
+      menu_index_to_test(-3)
       with_tmp_dir('test_game') do |game_dir|
         @game_dir = game_dir
         @config = {
@@ -35,7 +35,7 @@ describe 'Game tests menu' do
       end
     end
 
-    before(:each) do
+    before do
       set_test_tests_suites(%i[in_game_tests_suite])
     end
 
@@ -54,7 +54,7 @@ describe 'Game tests menu' do
       expect_menu_items_to_include('[*] in_game_test_2 -  - In-game test 2', menu_idx: -4)
       expect_menu_items_to_include('[ ] in_game_test_3 -  - In-game test 3', menu_idx: -4)
       expect_menu_items_to_include('[ ] in_game_test_4 -  - In-game test 4', menu_idx: -4)
-      expect_logs_to_include(/Missing file #{Regexp.escape(@game_dir)}\/Data\/AutoTest\.esp\. In-game tests will be disabled\. Please install the AutoTest mod\./)
+      expect_logs_to_include(%r{Missing file #{Regexp.escape(@game_dir)}/Data/AutoTest\.esp\. In-game tests will be disabled\. Please install the AutoTest mod\.})
     end
 
     context 'running in-game tests' do
@@ -67,7 +67,7 @@ describe 'Game tests menu' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_2]
           expect(auto_test_statuses).to eq(autotestsuite2: { 'autotest_21' => 'ok' })
-          [['in_game_test_2', 'ok']]
+          [%w[in_game_test_2 ok]]
         end
         mock_in_game_tests_run(
           expect_tests: { autotestsuite2: %w[autotest_21] },
@@ -102,17 +102,19 @@ describe 'Game tests menu' do
           if auto_test_statuses.key?(:autotestsuite1)
             expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
             [
-              ['in_game_test_1', 'ok'],
-              ['in_game_test_2', 'ok']
+              %w[in_game_test_1 ok],
+              %w[in_game_test_2 ok]
             ]
           else
-            expect(auto_test_statuses).to eq(autotestsuite2: {
-              'autotest_21' => 'ok',
-              'autotest_22' => 'ok'
-            })
+            expect(auto_test_statuses).to eq(
+              autotestsuite2: {
+                'autotest_21' => 'ok',
+                'autotest_22' => 'ok'
+              }
+            )
             [
-              ['in_game_test_3', 'ok'],
-              ['in_game_test_4', 'ok']
+              %w[in_game_test_3 ok],
+              %w[in_game_test_4 ok]
             ]
           end
         end
@@ -159,10 +161,10 @@ describe 'Game tests menu' do
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
           expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
           [
-            ['in_game_test_1', 'ok'],
-            ['in_game_test_2', 'ok'],
-            ['in_game_test_3', 'ok'],
-            ['in_game_test_4', 'ok']
+            %w[in_game_test_1 ok],
+            %w[in_game_test_2 ok],
+            %w[in_game_test_3 ok],
+            %w[in_game_test_4 ok]
           ]
         end
         mock_in_game_tests_run(
@@ -213,10 +215,10 @@ describe 'Game tests menu' do
         File.write(
           "#{@game_dir}/Data/Modsvaskr/Tests/Statuses_in_game_tests_suite.json",
           [
-            ['in_game_test_1', 'old_ok'],
-            ['in_game_test_2', 'ok'],
-            ['in_game_test_3', 'old_ok'],
-            ['in_game_test_4', 'ok']
+            %w[in_game_test_1 old_ok],
+            %w[in_game_test_2 ok],
+            %w[in_game_test_3 old_ok],
+            %w[in_game_test_4 ok]
           ].to_json
         )
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
@@ -229,8 +231,8 @@ describe 'Game tests menu' do
           expect(tests).to eq %w[in_game_test_3 in_game_test_4]
           expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_13' => 'ok', 'autotest_14' => 'ok' })
           [
-            ['in_game_test_3', 'ok'],
-            ['in_game_test_4', 'ok']
+            %w[in_game_test_3 ok],
+            %w[in_game_test_4 ok]
           ]
         end
         mock_in_game_tests_run(
@@ -273,17 +275,19 @@ describe 'Game tests menu' do
           if auto_test_statuses.key?(:autotestsuite1)
             expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
             [
-              ['in_game_test_1', 'ok'],
-              ['in_game_test_2', 'ok']
+              %w[in_game_test_1 ok],
+              %w[in_game_test_2 ok]
             ]
           else
-            expect(auto_test_statuses).to eq(autotestsuite2: {
-              'autotest_21' => 'failed',
-              'autotest_22' => 'ok'
-            })
+            expect(auto_test_statuses).to eq(
+              autotestsuite2: {
+                'autotest_21' => 'failed',
+                'autotest_22' => 'ok'
+              }
+            )
             [
-              ['in_game_test_3', 'failed'],
-              ['in_game_test_4', 'ok']
+              %w[in_game_test_3 failed],
+              %w[in_game_test_4 ok]
             ]
           end
         end

@@ -20,14 +20,14 @@ module Modsvaskr
       @config = config
       @game = game
       # Parse tests suites
-      @tests_suites = Hash[Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
+      @tests_suites = Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
         tests_suite = File.basename(tests_suite_file, '.rb').to_sym
         require "#{__dir__}/tests_suites/#{tests_suite}.rb"
         [
           tests_suite,
           TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, @game)
         ]
-      end]
+      end.to_h
       @tests_info_file = "#{@game.path}/Data/Modsvaskr/Tests/TestsInfo.json"
     end
 
@@ -151,14 +151,14 @@ module Modsvaskr
           if in_game_tests_subscriptions.key?(in_game_tests_suite)
             in_game_tests_subscriptions[in_game_tests_suite].each do |tests_suite_subscription|
               selected_in_game_tests_statuses = in_game_tests_statuses.slice(*tests_suite_subscription[:in_game_tests])
-              unless selected_in_game_tests_statuses.empty?
-                tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
-                tests_suite.set_statuses(
-                  tests_suite.
-                    parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
-                    select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
-                )
-              end
+              next if selected_in_game_tests_statuses.empty?
+
+              tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
+              tests_suite.set_statuses(
+                tests_suite.
+                  parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
+                  select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
+              )
             end
           end
         end
@@ -176,12 +176,12 @@ module Modsvaskr
       unless defined?(@tests_info_cache)
         @tests_info_cache =
           if File.exist?(@tests_info_file)
-            Hash[JSON.parse(File.read(@tests_info_file)).map do |tests_suite_str, tests_suite_info|
+            JSON.parse(File.read(@tests_info_file)).map do |tests_suite_str, tests_suite_info|
               [
                 tests_suite_str.to_sym,
-                Hash[tests_suite_info.map { |test_name, test_info| [test_name, test_info.transform_keys(&:to_sym)] }]
+                tests_suite_info.map { |test_name, test_info| [test_name, test_info.transform_keys(&:to_sym)] }.to_h
               ]
-            end]
+            end.to_h
           else
             {}
           end

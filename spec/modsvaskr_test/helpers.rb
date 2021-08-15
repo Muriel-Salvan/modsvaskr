@@ -191,10 +191,8 @@ module ModsvaskrTest
     # * Proc: Code called with game dir setup
     #   * Parameters::
     #     * *game_dir* (String): Game directory that can be used
-    def with_game_dir
-      with_tmp_dir('game') do |game_dir|
-        yield game_dir
-      end
+    def with_game_dir(&block)
+      with_tmp_dir('game', &block)
     end
 
     # Add test game types in the configs created
@@ -203,7 +201,7 @@ module ModsvaskrTest
         config = org_new.call(file)
         # Add test game plugins
         config.instance_eval do
-          @game_types.merge!(Hash[
+          @game_types.merge!(
             Dir.glob("#{__dir__}/games/*.rb").map do |game_type_file|
               require game_type_file
               base_name = File.basename(game_type_file, '.rb')
@@ -211,8 +209,8 @@ module ModsvaskrTest
                 base_name.to_sym,
                 ModsvaskrTest::Games.const_get(base_name.split('_').collect(&:capitalize).join.to_sym)
               ]
-            end
-          ])
+            end.to_h
+          )
         end
         config
       end
@@ -228,16 +226,16 @@ module ModsvaskrTest
         tests_runner.instance_exec do
           @tests_suites = @tests_suites.
             # First add tests suites defined in tests
-            merge(Hash[Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
+            merge(Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
               require tests_suite_file
               tests_suite = File.basename(tests_suite_file, '.rb').to_sym
               [
                 tests_suite,
                 ModsvaskrTest::TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, game)
               ]
-            end]).
+            end.to_h).
             # Then filter them if needed
-            select { |tests_suite, _tests_suite_instance| selected_tests_suites.nil? || selected_tests_suites.include?(tests_suite)}
+            select { |tests_suite, _tests_suite_instance| selected_tests_suites.nil? || selected_tests_suites.include?(tests_suite) }
         end
         tests_runner
       end
@@ -391,6 +389,7 @@ module ModsvaskrTest
       raise "No more system calls were expected, but received a call to system #{cmd}" if expected_cmd.nil?
       # Check that we wanted this particular command to be mocked
       raise "Expected system call #{expected_cmd}, but received a call to system #{cmd}" if (expected_cmd.is_a?(Regexp) && !(cmd =~ expected_cmd)) || (expected_cmd.is_a?(String) && cmd != expected_cmd)
+
       # We're good. mock it.
       mocked_result = mocked_syscall.is_a?(Proc) ? mocked_syscall.call(cmd) : mocked_syscall
       result =

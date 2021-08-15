@@ -69,12 +69,12 @@ module Modsvaskr
           )
           # Clear the AutoTest test statuses that we are going to run
           statuses_file = "#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_#{tests_suite}_Statuses.json"
-          if File.exist?(statuses_file)
-            File.write(
-              statuses_file,
-              JSON.pretty_generate('string' => JSON.parse(File.read(statuses_file))['string'].delete_if { |test_name, _test_status| tests.include?(test_name) })
-            )
-          end
+          next unless File.exist?(statuses_file)
+
+          File.write(
+            statuses_file,
+            JSON.pretty_generate('string' => JSON.parse(File.read(statuses_file))['string'].delete_if { |test_name, _test_status| tests.include?(test_name) })
+          )
         end
         auto_test_config_file = "#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_Config.json"
         # Write the JSON file that contains the configuration of the AutoTest tests runner
@@ -122,24 +122,24 @@ module Modsvaskr
             first_test_to_run = nil
             current_tests_statuses = check_auto_test_statuses
             @available_tests_suites.each do |tests_suite|
-              if tests_to_run.key?(tests_suite)
-                found_test_ok =
-                  if current_tests_statuses.key?(tests_suite)
-                    # Find the first test that would be run (meaning the first one having no status, or status 'started')
-                    tests_to_run[tests_suite].find do |test_name|
-                      found_test_name, found_test_status = current_tests_statuses[tests_suite].find { |(current_test_name, _current_test_status)| current_test_name == test_name }
-                      found_test_name.nil? || found_test_status == 'started'
-                    end
-                  else
-                    # For sure the first test of this suite will be the first one to run
-                    tests_to_run[tests_suite].first
+              next unless tests_to_run.key?(tests_suite)
+
+              found_test_ok =
+                if current_tests_statuses.key?(tests_suite)
+                  # Find the first test that would be run (meaning the first one having no status, or status 'started')
+                  tests_to_run[tests_suite].find do |test_name|
+                    found_test_name, found_test_status = current_tests_statuses[tests_suite].find { |(current_test_name, _current_test_status)| current_test_name == test_name }
+                    found_test_name.nil? || found_test_status == 'started'
                   end
-                if found_test_ok
-                  first_tests_suite_to_run = tests_suite
-                  first_test_to_run = found_test_ok
-                  break
+                else
+                  # For sure the first test of this suite will be the first one to run
+                  tests_to_run[tests_suite].first
                 end
-              end
+              next unless found_test_ok
+
+              first_tests_suite_to_run = tests_suite
+              first_test_to_run = found_test_ok
+              break
             end
             if first_tests_suite_to_run.nil?
               log "[ In-game testing #{@game.name} ] - No more test to be run."
@@ -151,7 +151,7 @@ module Modsvaskr
               idx_launch += 1
               log "[ In-game testing #{@game.name} ] - Start monitoring in-game testing..."
               last_time_tests_changed = Time.now
-              while @game.running? do
+              while @game.running?
                 check_auto_test_statuses
                 # If the tests haven't changed for too long, consider the game has frozen, but not crashed. So kill it.
                 if Time.now - last_time_tests_changed > @game.timeout_frozen_tests_secs
@@ -170,7 +170,7 @@ module Modsvaskr
               # Check for which reason the game has stopped, and eventually end the testing session.
               # Careful as this JSON file can be written by Papyrus that treat strings as case insensitive.
               # cf. https://github.com/xanderdunn/skaar/wiki/Common-Tasks
-              auto_test_config = Hash[JSON.parse(File.read(auto_test_config_file))['string'].map { |key, value| [key.downcase, value.downcase] }]
+              auto_test_config = JSON.parse(File.read(auto_test_config_file))['string'].map { |key, value| [key.downcase, value.downcase] }.to_h
               if auto_test_config.dig('stopped_by') == 'user'
                 log "[ In-game testing #{@game.name} ] - Tests have been stopped by user."
                 break
@@ -198,12 +198,12 @@ module Modsvaskr
                   File.write(
                     "#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_#{first_tests_suite_to_run}_Statuses.json",
                     JSON.pretty_generate(
-                      'string' => Hash[((last_test_statuses[first_tests_suite_to_run] || []) + [[first_test_to_run, '']]).map do |(test_name, test_status)|
+                      'string' => ((last_test_statuses[first_tests_suite_to_run] || []) + [[first_test_to_run, '']]).map do |(test_name, test_status)|
                         [
                           test_name,
                           test_name == first_test_to_run ? 'failed_ctd' : test_status
                         ]
-                      end]
+                      end.to_h
                     )
                   )
                   # Notify the callbacks updating test statuses
@@ -215,7 +215,7 @@ module Modsvaskr
                 out 'Start again automatically as no_prompt has been set.'
               else
                 # First, flush stdin of any pending character
-                $stdin.getc while !select([$stdin], nil, nil, 2).nil?
+                $stdin.getc until select([$stdin], nil, nil, 2).nil?
                 out "We are going to start again in #{@game.timeout_interrupt_tests_secs} seconds. Press Enter now to interrupt it."
                 key_pressed =
                   begin
@@ -270,7 +270,7 @@ module Modsvaskr
           tests_statuses.each do |(test_name, test_status)|
             log "[ In-game testing #{@game.name} ]     * #{test_name}: #{test_status}"
           end
-          @on_auto_test_statuses_diffs.call(tests_suite, Hash[tests_statuses])
+          @on_auto_test_statuses_diffs.call(tests_suite, tests_statuses.to_h)
         end
       end
       # Remember the current statuses
@@ -285,13 +285,13 @@ module Modsvaskr
     def auto_test_statuses
       statuses = {}
       `dir "#{@game.path}/Data/SKSE/Plugins/StorageUtilData" /B`.split("\n").each do |file|
-        if file =~ /^AutoTest_(.+)_Statuses\.json$/
-          auto_test_suite = $1.downcase.to_sym
-          # Careful as this JSON file can be written by Papyrus that treat strings as case insensitive.
-          # cf. https://github.com/xanderdunn/skaar/wiki/Common-Tasks
-          statuses[auto_test_suite] = JSON.parse(File.read("#{@game.path}/Data/SKSE/Plugins/StorageUtilData/#{file}"))['string'].map do |test_name, test_status|
-            [test_name.downcase, test_status.downcase]
-          end
+        next unless file =~ /^AutoTest_(.+)_Statuses\.json$/
+
+        auto_test_suite = Regexp.last_match(1).downcase.to_sym
+        # Careful as this JSON file can be written by Papyrus that treat strings as case insensitive.
+        # cf. https://github.com/xanderdunn/skaar/wiki/Common-Tasks
+        statuses[auto_test_suite] = JSON.parse(File.read("#{@game.path}/Data/SKSE/Plugins/StorageUtilData/#{file}"))['string'].map do |test_name, test_status|
+          [test_name.downcase, test_status.downcase]
         end
       end
       statuses
@@ -309,8 +309,8 @@ module Modsvaskr
       statuses1.each do |tests_suite, tests_info|
         if statuses2.key?(tests_suite)
           # Handle Hashes as it will be faster
-          statuses1_for_test = Hash[tests_info]
-          statuses2_for_test = Hash[statuses2[tests_suite]]
+          statuses1_for_test = tests_info.to_h
+          statuses2_for_test = (statuses2[tests_suite]).to_h
           statuses1_for_test.each do |test_name, status1|
             if statuses2_for_test.key?(test_name)
               if statuses2_for_test[test_name] != status1
@@ -325,11 +325,11 @@ module Modsvaskr
             end
           end
           statuses2_for_test.each do |test_name, status2|
-            unless statuses1_for_test.key?(test_name)
-              # This test has been added
-              statuses[tests_suite] = [] unless statuses.key?(tests_suite)
-              statuses[tests_suite] << [test_name, status2]
-            end
+            next if statuses1_for_test.key?(test_name)
+
+            # This test has been added
+            statuses[tests_suite] = [] unless statuses.key?(tests_suite)
+            statuses[tests_suite] << [test_name, status2]
           end
         else
           # All test statuses have been removed

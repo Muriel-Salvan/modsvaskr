@@ -10,10 +10,14 @@ module ModsvaskrTest
     class TestGame < Modsvaskr::Game
 
       class << self
-        attr_accessor *%i[
-          menu_proc
-          init_proc
-        ]
+
+        attr_accessor(
+          *%i[
+            menu_proc
+            init_proc
+          ]
+        )
+
       end
 
       # Initialize the game
