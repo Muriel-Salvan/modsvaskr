@@ -1,6 +1,6 @@
 describe 'Game tests menu' do
 
-  context 'checking the menu itself' do
+  context 'when checking the menu itself' do
 
     around do |example|
       # Register the key sequence getting to the desired menu

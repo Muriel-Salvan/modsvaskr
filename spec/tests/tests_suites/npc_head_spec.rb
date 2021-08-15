@@ -1,8 +1,8 @@
 describe 'Game tests menu' do
 
-  context 'checking tests suite plugin' do
+  context 'when checking tests suite plugin' do
 
-    context 'npc_head' do
+    describe 'npc_head' do
 
       around do |example|
         # Register the key sequence getting to the desired menu

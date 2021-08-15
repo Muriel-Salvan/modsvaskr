@@ -51,3 +51,8 @@ RSpec/StubbedMock:
 # Include: **/*_spec*rb*, **/spec/**/*
 RSpec/FilePath:
   SpecSuffixOnly: true
+
+# Most test cases are integration tests of the executable, so they don't relate to a class.
+# Configuration parameters: IgnoredMetadata.
+RSpec/DescribeClass:
+  Enabled: false
