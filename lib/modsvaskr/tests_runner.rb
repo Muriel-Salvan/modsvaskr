@@ -105,16 +105,16 @@ module Modsvaskr
       # Test names (ordered) to be performed in game, per tests suite
       # Hash< Symbol, Array<String> >
       in_game_tests = {}
-      selected_tests.each do |tests_suite, selected_tests|
+      selected_tests.each do |tests_suite, suite_selected_tests|
         if @tests_suites[tests_suite].respond_to?(:run_test)
           # Simple synchronous tests
-          selected_tests.each do |test_name|
+          suite_selected_tests.each do |test_name|
             # Store statuses after each test just in case of crash
             set_statuses_for(tests_suite, [[test_name, @tests_suites[tests_suite].run_test(test_name)]])
           end
         end
         # We run the tests from the game itself.
-        in_game_tests[tests_suite] = selected_tests if @tests_suites[tests_suite].respond_to?(:in_game_tests_for)
+        in_game_tests[tests_suite] = suite_selected_tests if @tests_suites[tests_suite].respond_to?(:in_game_tests_for)
       end
       unless in_game_tests.empty?
         # Keep track of the mapping between tests suites and in-game tests, per in-game tests suite.
@@ -128,15 +128,15 @@ module Modsvaskr
         # Hash< Symbol, Array< String > >
         merged_in_game_tests = {}
         # Get the list of in-game tests we have to run and that we will monitor
-        in_game_tests.each do |tests_suite, selected_tests|
-          in_game_tests_to_subscribe = @tests_suites[tests_suite].in_game_tests_for(selected_tests)
+        in_game_tests.each do |tests_suite, suite_selected_tests|
+          in_game_tests_to_subscribe = @tests_suites[tests_suite].in_game_tests_for(suite_selected_tests)
           in_game_tests_to_subscribe.each do |in_game_tests_suite, selected_in_game_tests|
             selected_in_game_tests_downcase = selected_in_game_tests.map(&:downcase)
             in_game_tests_subscriptions[in_game_tests_suite] = [] unless in_game_tests_subscriptions.key?(in_game_tests_suite)
             in_game_tests_subscriptions[in_game_tests_suite] << {
               tests_suite: tests_suite,
               in_game_tests: selected_in_game_tests_downcase,
-              selected_tests: selected_tests
+              selected_tests: suite_selected_tests
             }
             merged_in_game_tests[in_game_tests_suite] = [] unless merged_in_game_tests.key?(in_game_tests_suite)
             merged_in_game_tests[in_game_tests_suite] = (merged_in_game_tests[in_game_tests_suite] + selected_in_game_tests_downcase).uniq

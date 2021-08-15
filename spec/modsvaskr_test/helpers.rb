@@ -106,8 +106,8 @@ module ModsvaskrTest
         <<~EO_ERROR_MESSAGE
           Expected menu ##{menu_idx} to have item "#{line}", but got this instead:
           #{
-            ModsvaskrTest.screenshots[menu_idx][3..-3].map do |line|
-              stripped_line = line.strip
+            ModsvaskrTest.screenshots[menu_idx][3..-3].map do |screen_line|
+              stripped_line = screen_line.strip
               stripped_line.empty? ? nil : stripped_line
             end.compact.join("\n")
           }
