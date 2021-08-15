@@ -4,6 +4,7 @@ require 'modsvaskr_test/helpers'
 require 'modsvaskr_test/games/test_game'
 require 'modsvaskr_test/tests_suites/in_game_tests_suite'
 require 'modsvaskr_test/tests_suites/tests_suite'
+require "#{Gem.loaded_specs['curses_menu'].full_gem_path}/spec/curses_menu_test.rb"
 
 module ModsvaskrTest
 
@@ -20,32 +21,10 @@ module ModsvaskrTest
 
     # Finalize the curses menu window
     def curses_menu_finalize
-      ModsvaskrTest.screenshots << capture_screenshot
       result = super
+      ModsvaskrTest.screenshots << @screenshot.map { |line| line.map { |char_info| char_info[:char] }.join }
       puts ModsvaskrTest.screenshots.last.select { |line| !line.strip.empty? }.join("\n") if ModsvaskrTest::Helpers.debug?
       result
-    end
-
-    private
-
-    # Get a screenshot of the menu
-    #
-    # Result::
-    # * Array<String>: List of lines
-    def capture_screenshot
-      # Curses is initialized
-      window = Curses.stdscr
-      old_x = window.curx
-      old_y = window.cury
-      chars = []
-      window.maxy.times do |idx_y|
-        window.maxx.times do |idx_x|
-          window.setpos idx_y, idx_x
-          chars << window.inch
-        end
-      end
-      window.setpos old_y, old_x
-      chars.map(&:chr).each_slice(window.maxx).map(&:join)
     end
 
   end

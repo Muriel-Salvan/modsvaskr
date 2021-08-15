@@ -1,2 +1,5 @@
 # As this is a gem, don't commit Gemfile.lock
 Gemfile.lock
+
+# Don't commit vendored gems
+vendor/

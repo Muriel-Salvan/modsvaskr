@@ -20,13 +20,17 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'curses_menu', '~> 0.0'
   spec.add_dependency 'elder_scrolls_plugin', '~> 0.0'
-  spec.add_dependency 'nokogiri', '~> 1.10'
+  spec.add_dependency 'nokogiri', '~> 1.12'
 
   # Development dependencies (tests, build)
   # Test framework
   spec.add_development_dependency 'rspec', '~> 3.10'
   # Mock HTTP calls
-  spec.add_development_dependency 'webmock', '~> 3.11'
+  spec.add_development_dependency 'webmock', '~> 3.14'
   # Automatic semantic releasing
-  spec.add_development_dependency 'sem_ver_components', '~> 0.0'
+  spec.add_development_dependency 'sem_ver_components', '~> 0.3'
+  # Lint checker
+  spec.add_development_dependency 'rubocop', '~> 1.19'
+  # Lint checker for rspec
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.4'
 end

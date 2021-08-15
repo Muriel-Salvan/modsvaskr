@@ -52,19 +52,19 @@ describe 'Game tests menu' do
       end
 
       it 'discovers 1 test' do
-        discover_with <<~EOS
+        discover_with <<~EO_CSV
           "test_game.esm",CELL,0001AB5F,coc,FortSungard03
           "mod1.esp",CELL,0001AB5F,coc,FortSungard03
-        EOS
+        EO_CSV
         expect_menu_items_to_include('[+] interior_cell - 0 / 1')
         expect_menu_items_to_include('[ ] FortSungard03 -  - Load cell FortSungard03', menu_idx: -4)
       end
 
       it 'discovers 1 test having non-ASCI characters' do
-        discover_with <<~EOS
+        discover_with <<~EO_CSV
           "test_game.esm",CELL,0001AB5F,coc,フォートサンガード
           "mod1.esp",CELL,0001AB5F,coc,フォートサンガード
-        EOS
+        EO_CSV
         expect_menu_items_to_include('[+] interior_cell - 0 / 1')
         expect_menu_items_to_include(/\[ \] .+ -  - Load cell .+/, menu_idx: -4)
         # TODO: Use the following when ncurses will handle UTF-8 properly
@@ -72,37 +72,37 @@ describe 'Game tests menu' do
       end
 
       it 'discovers only cells modifying the vanilla ones' do
-        discover_with <<~EOS
+        discover_with <<~EO_CSV
           "test_game.esm",CELL,0001AB52,coc,FortSungard02
           "test_game.esm",CELL,0001AB53,coc,FortSungard03
           "test_game.esm",CELL,0001AB54,coc,FortSungard04
           "test_game.esm",CELL,0001AB55,coc,FortSungard05
           "mod1.esp",CELL,0001AB53,coc,FortSungard03
           "mod2.esp",CELL,0001AB55,coc,FortSungard05
-        EOS
+        EO_CSV
         expect_menu_items_to_include('[+] interior_cell - 0 / 2')
         expect_menu_items_to_include('[ ] FortSungard03 -  - Load cell FortSungard03', menu_idx: -4)
         expect_menu_items_to_include('[ ] FortSungard05 -  - Load cell FortSungard05', menu_idx: -4)
       end
 
       it 'ignores other data dump when discovering tests' do
-        discover_with <<~EOS
+        discover_with <<~EO_CSV
           "test_game.esm",CELL,0001AB5F,coc,FortSungard03
           "test_game.esm",CELL,00106666,cow,LabyrinthianMazeWorld,0,0
           "test_game.esm",NPC_,00014137,Angrenor Once-Honored
           "mod1.esp",NPC_,00014137,Angrenor Once-Honored
           "mod1.esp",CELL,00106666,cow,LabyrinthianMazeWorld,0,0
           "mod1.esp",CELL,0001AB5F,coc,FortSungard03
-        EOS
+        EO_CSV
         expect_menu_items_to_include('[+] interior_cell - 0 / 1')
         expect_menu_items_to_include('[ ] FortSungard03 -  - Load cell FortSungard03', menu_idx: -4)
       end
 
       it 'runs in-game tests Locations' do
-        mock_xedit_dump_with <<~EOS
+        mock_xedit_dump_with <<~EO_CSV
           "test_game.esm",CELL,0001AB5F,coc,FortSungard03
           "mod1.esp",CELL,0001AB5F,coc,FortSungard03
-        EOS
+        EO_CSV
         mock_in_game_tests_run(
           expect_tests: {
             locations: %w[fortsungard03]
