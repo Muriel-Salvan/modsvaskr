@@ -291,7 +291,7 @@ module ModsvaskrTest
       unless File.exist?(autotest_esp)
         # Create the AutoTest plugin
         expect(ElderScrollsPlugin).to receive(:new).with("#{@game_dir}/Data/AutoTest.esp") do
-          mocked_esp = double('AutoTest esp plugin')
+          mocked_esp = instance_double(ElderScrollsPlugin)
           expect(mocked_esp).to receive(:to_json) do
             {
               sub_chunks: [
