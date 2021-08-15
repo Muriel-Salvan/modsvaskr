@@ -68,7 +68,9 @@ describe 'Game tests menu' do
         expect_menu_items_to_include('[+] npc - 0 / 1')
         expect_menu_items_to_include(%r{\[ \] test_game.esm/82231 -  - Take screenshot of .+ - test_game.esm}, menu_idx: -4)
         # TODO: Use the following when ncurses will handle UTF-8 properly
+        # rubocop:disable Style/AsciiComments
         # expect_menu_items_to_include('[ ] test_game.esm/82231 -  - Take screenshot of フォートサンガード - test_game.esm', menu_idx: -4)
+        # rubocop:enable Style/AsciiComments
       end
 
       it 'discovers 1 test per NPC even when mods modify the same NPC' do

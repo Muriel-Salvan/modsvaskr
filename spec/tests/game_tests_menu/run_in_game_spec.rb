@@ -62,16 +62,16 @@ describe 'Game tests menu' do
       it 'runs 1 selected in-game test' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_2]
-          { autotestsuite2: %w[autotest_21] }
+          { autotestsuite_2: %w[autotest_21] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_2]
-          expect(auto_test_statuses).to eq(autotestsuite2: { 'autotest_21' => 'ok' })
+          expect(auto_test_statuses).to eq(autotestsuite_2: { 'autotest_21' => 'ok' })
           [%w[in_game_test_2 ok]]
         end
         mock_in_game_tests_run(
-          expect_tests: { autotestsuite2: %w[autotest_21] },
-          mock_tests_statuses: { autotestsuite2: { 'autotest_21' => 'ok' } }
+          expect_tests: { autotestsuite_2: %w[autotest_21] },
+          mock_tests_statuses: { autotestsuite_2: { 'autotest_21' => 'ok' } }
         )
         run_modsvaskr(
           config: @config,
@@ -93,21 +93,21 @@ describe 'Game tests menu' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
           {
-            autotestsuite1: %w[autotest_11],
-            autotestsuite2: %w[autotest_21 autotest_22]
+            autotestsuite_1: %w[autotest_11],
+            autotestsuite_2: %w[autotest_21 autotest_22]
           }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          if auto_test_statuses.key?(:autotestsuite1)
-            expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
+          if auto_test_statuses.key?(:autotestsuite_1)
+            expect(auto_test_statuses).to eq(autotestsuite_1: { 'autotest_11' => 'ok' })
             [
               %w[in_game_test_1 ok],
               %w[in_game_test_2 ok]
             ]
           else
             expect(auto_test_statuses).to eq(
-              autotestsuite2: {
+              autotestsuite_2: {
                 'autotest_21' => 'ok',
                 'autotest_22' => 'ok'
               }
@@ -120,14 +120,14 @@ describe 'Game tests menu' do
         end
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_11],
-            autotestsuite2: %w[autotest_21 autotest_22]
+            autotestsuite_1: %w[autotest_11],
+            autotestsuite_2: %w[autotest_21 autotest_22]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_11' => 'ok'
             },
-            autotestsuite2: {
+            autotestsuite_2: {
               'autotest_21' => 'ok',
               'autotest_22' => 'ok'
             }
@@ -154,12 +154,12 @@ describe 'Game tests menu' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
           {
-            autotestsuite1: %w[autotest_11]
+            autotestsuite_1: %w[autotest_11]
           }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
+          expect(auto_test_statuses).to eq(autotestsuite_1: { 'autotest_11' => 'ok' })
           [
             %w[in_game_test_1 ok],
             %w[in_game_test_2 ok],
@@ -169,13 +169,13 @@ describe 'Game tests menu' do
         end
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_11]
+            autotestsuite_1: %w[autotest_11]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_11' => 'ok'
             },
-            autotestsuite2: {
+            autotestsuite_2: {
               'autotest_21' => 'ok',
               'autotest_22' => 'ok'
             }
@@ -201,7 +201,7 @@ describe 'Game tests menu' do
         # Simulate a previous run that has put statuses
         FileUtils.mkdir_p "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData"
         File.write(
-          "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData/AutoTest_autotestsuite1_Statuses.json",
+          "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData/AutoTest_autotestsuite_1_Statuses.json",
           {
             string: {
               autotest_11: 'old_ok',
@@ -224,12 +224,12 @@ describe 'Game tests menu' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_3 in_game_test_4]
           {
-            autotestsuite1: %w[autotest_13 autotest_14]
+            autotestsuite_1: %w[autotest_13 autotest_14]
           }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_13' => 'ok', 'autotest_14' => 'ok' })
+          expect(auto_test_statuses).to eq(autotestsuite_1: { 'autotest_13' => 'ok', 'autotest_14' => 'ok' })
           [
             %w[in_game_test_3 ok],
             %w[in_game_test_4 ok]
@@ -237,10 +237,10 @@ describe 'Game tests menu' do
         end
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_13 autotest_14]
+            autotestsuite_1: %w[autotest_13 autotest_14]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_13' => 'ok',
               'autotest_14' => 'ok'
             }
@@ -266,21 +266,21 @@ describe 'Game tests menu' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
           {
-            autotestsuite1: %w[autotest_11],
-            autotestsuite2: %w[autotest_21 autotest_22]
+            autotestsuite_1: %w[autotest_11],
+            autotestsuite_2: %w[autotest_21 autotest_22]
           }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          if auto_test_statuses.key?(:autotestsuite1)
-            expect(auto_test_statuses).to eq(autotestsuite1: { 'autotest_11' => 'ok' })
+          if auto_test_statuses.key?(:autotestsuite_1)
+            expect(auto_test_statuses).to eq(autotestsuite_1: { 'autotest_11' => 'ok' })
             [
               %w[in_game_test_1 ok],
               %w[in_game_test_2 ok]
             ]
           else
             expect(auto_test_statuses).to eq(
-              autotestsuite2: {
+              autotestsuite_2: {
                 'autotest_21' => 'failed',
                 'autotest_22' => 'ok'
               }
@@ -293,14 +293,14 @@ describe 'Game tests menu' do
         end
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_11],
-            autotestsuite2: %w[autotest_21 autotest_22]
+            autotestsuite_1: %w[autotest_11],
+            autotestsuite_2: %w[autotest_21 autotest_22]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_11' => 'ok'
             },
-            autotestsuite2: {
+            autotestsuite_2: {
               'autotest_21' => 'failed',
               'autotest_22' => 'ok'
             }
@@ -325,22 +325,22 @@ describe 'Game tests menu' do
       it 'runs several tests and get their statuses through several checks' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a CTD: autotest_3 and autotest_4 have not been run, and the ending status is still 'run'
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: [
-            { autotestsuite1: { 'autotest_1' => 'failed', 'autotest_2' => 'ok' } },
-            { autotestsuite1: { 'autotest_3' => 'ok' } },
-            { autotestsuite1: { 'autotest_4' => 'ok' } }
+            { autotestsuite_1: { 'autotest_1' => 'failed', 'autotest_2' => 'ok' } },
+            { autotestsuite_1: { 'autotest_3' => 'ok' } },
+            { autotestsuite_1: { 'autotest_4' => 'ok' } }
           ]
         )
         run_modsvaskr(
@@ -362,20 +362,20 @@ describe 'Game tests menu' do
       it 'interrupts in-game tests when the user stopped the session from the game' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a stop done by the user in the middle of the test session, after autotest_2 run
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_1' => 'ok',
               'autotest_2' => 'ok'
             }
@@ -401,20 +401,20 @@ describe 'Game tests menu' do
       it 'restarts in-game tests when the game has done a CTD in the middle of a tests session' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a CTD: autotest_3 and autotest_4 have not been run, and the ending status is still 'run'
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_1' => 'ok',
               'autotest_2' => 'ok'
             }
@@ -425,10 +425,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_3' => 'ok',
               'autotest_4' => 'ok'
             }
@@ -454,20 +454,20 @@ describe 'Game tests menu' do
       it 'restarts in-game tests when the game has done a CTD in the middle of a started test' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a CTD: autotest_4 (the last test) has started, and the ending status is still 'run'
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_1' => 'ok',
               'autotest_2' => 'ok',
               'autotest_3' => 'ok',
@@ -480,10 +480,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_4' => 'ok'
             }
           },
@@ -508,20 +508,20 @@ describe 'Game tests menu' do
       it 'skips in-game tests that keep provoking CTDs' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a CTD: autotest_3 and autotest_4 have not been run, and the ending status is still 'run'
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_1' => 'ok',
               'autotest_2' => 'ok'
             }
@@ -532,7 +532,7 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_execution_end: 'run'
         )
@@ -542,10 +542,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_4' => 'ok'
             }
           },
@@ -570,20 +570,20 @@ describe 'Game tests menu' do
       it 'skips in-game tests that keep provoking CTDs with case-insensitive test names' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[AutoTest_1 AutoTest_2 AutoTest_3 AutoTest_4] }
+          { autotestsuite_1: %w[AutoTest_1 AutoTest_2 AutoTest_3 AutoTest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a CTD: autotest_3 and autotest_4 have not been run, and the ending status is still 'run'
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               # Simulate the Papyrus has output JSON keys with a different case
               'AutoTest_1' => 'ok',
               'AutoTest_2' => 'ok'
@@ -595,7 +595,7 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_execution_end: 'run'
         )
@@ -605,10 +605,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'AutoTest_4' => 'ok'
             }
           },
@@ -633,20 +633,20 @@ describe 'Game tests menu' do
       it 'detects hung game and restarts it' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a stuck game: autotest_1 gets updated but no other status will get updated for at least 3 seconds (3 iterations)
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: [
-            { autotestsuite1: { 'autotest_1' => 'ok' } },
+            { autotestsuite_1: { 'autotest_1' => 'ok' } },
             {},
             {}
           ],
@@ -663,10 +663,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_2' => 'ok',
               'autotest_3' => 'ok',
               'autotest_4' => 'ok'
@@ -692,20 +692,20 @@ describe 'Game tests menu' do
       it 'detects hung game and restarts it with several attempts' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate a stuck game: autotest_1 gets updated but no other status will get updated for at least 3 seconds (3 iterations)
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: [
-            { autotestsuite1: { 'autotest_1' => 'ok' } },
+            { autotestsuite_1: { 'autotest_1' => 'ok' } },
             {},
             {}
           ],
@@ -726,10 +726,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_2' => 'ok',
               'autotest_3' => 'ok',
               'autotest_4' => 'ok'
@@ -755,20 +755,20 @@ describe 'Game tests menu' do
       it 'skips in-game tests that keep hanging the game' do
         ModsvaskrTest::TestsSuites::InGameTestsSuite.in_game_tests_for = proc do |tests|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          { autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
+          { autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4] }
         end
         ModsvaskrTest::TestsSuites::InGameTestsSuite.parse_auto_tests_statuses_for = proc do |tests, auto_test_statuses|
           expect(tests).to eq %w[in_game_test_1 in_game_test_2 in_game_test_3 in_game_test_4]
-          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite1].sort
-          auto_test_statuses[:autotestsuite1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
+          expect(auto_test_statuses.keys.sort).to eq %i[autotestsuite_1].sort
+          auto_test_statuses[:autotestsuite_1].map { |in_game_test, in_game_test_status| ["in_game_test_#{in_game_test.match(/autotest_(\d)/)[1]}", in_game_test_status] }
         end
         # Here we simulate autotest_2 hanging game repeatedly
         mock_in_game_tests_run(
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: [
-            { autotestsuite1: { 'autotest_1' => 'ok' } },
+            { autotestsuite_1: { 'autotest_1' => 'ok' } },
             {},
             {}
           ],
@@ -785,7 +785,7 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: [
             {},
@@ -807,10 +807,10 @@ describe 'Game tests menu' do
         mock_in_game_tests_run(
           expect_game_launch_cmd: '"Data\AutoLoad.cmd" auto_test',
           expect_tests: {
-            autotestsuite1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
+            autotestsuite_1: %w[autotest_1 autotest_2 autotest_3 autotest_4]
           },
           mock_tests_statuses: {
-            autotestsuite1: {
+            autotestsuite_1: {
               'autotest_3' => 'ok',
               'autotest_4' => 'ok'
             }
