@@ -219,8 +219,8 @@ module ModsvaskrTest
     # Set tests plugins defined only for tests
     #
     # Parameters::
-    # * *selected_tests_suites* (Array<Symbol> or nil): Tests that are available for tests, or nil for all tests [default = nil]
-    def set_test_tests_suites(selected_tests_suites = nil)
+    # * *selected_tests_suites* (Array<Symbol> or nil): Tests that are available for tests, or nil for all tests
+    def test_tests_suites=(selected_tests_suites)
       allow(Modsvaskr::TestsRunner).to receive(:new).and_wrap_original do |org_new, config, game|
         tests_runner = org_new.call(config, game)
         tests_runner.instance_exec do

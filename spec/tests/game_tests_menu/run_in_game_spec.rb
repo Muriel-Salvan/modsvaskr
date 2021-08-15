@@ -36,7 +36,7 @@ describe 'Game tests menu' do
     end
 
     before do
-      set_test_tests_suites(%i[in_game_tests_suite])
+      self.test_tests_suites = %i[in_game_tests_suite]
     end
 
     it 'does not run in-game tests if AutoTest is not installed' do

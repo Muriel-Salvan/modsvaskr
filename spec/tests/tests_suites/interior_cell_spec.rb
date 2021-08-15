@@ -34,7 +34,7 @@ describe 'Game tests menu' do
       end
 
       before do
-        set_test_tests_suites([:interior_cell])
+        self.test_tests_suites = [:interior_cell]
       end
 
       # Run commands to discover tests with a given mocked CSV from xEdit

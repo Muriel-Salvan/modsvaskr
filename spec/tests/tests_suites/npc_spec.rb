@@ -34,7 +34,7 @@ describe 'Game tests menu' do
       end
 
       before do
-        set_test_tests_suites([:npc])
+        self.test_tests_suites = [:npc]
       end
 
       # Run commands to discover tests with a given mocked CSV from xEdit
