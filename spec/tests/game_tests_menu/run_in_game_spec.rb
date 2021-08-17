@@ -39,7 +39,7 @@ describe 'Game tests menu' do
       )
     end
 
-    around(:each) do |example|
+    around do |example|
       with_game_dir do
         example.run
       end
