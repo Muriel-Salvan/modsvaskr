@@ -116,50 +116,50 @@ module Modsvaskr
         # We run the tests from the game itself.
         in_game_tests[tests_suite] = suite_selected_tests if @tests_suites[tests_suite].respond_to?(:in_game_tests_for)
       end
-      unless in_game_tests.empty?
-        # Keep track of the mapping between tests suites and in-game tests, per in-game tests suite.
-        # Associated info is:
-        # * *tests_suite* (Symbol): The tests suite that has subscribed to the statuses of some in-game tests of the in-game tests suite.
-        # * *in_game_tests* (Array<String>): List of in-game tests that the tests suite is interested in.
-        # * *selected_tests* (Array<String>): List of selected tests for which in-game tests are useful.
-        # Hash< Symbol, Array< Hash< Symbol, Object > > >
-        in_game_tests_subscriptions = {}
-        # List of all in-game tests to perform, per in-game tests suite
-        # Hash< Symbol, Array< String > >
-        merged_in_game_tests = {}
-        # Get the list of in-game tests we have to run and that we will monitor
-        in_game_tests.each do |tests_suite, suite_selected_tests|
-          in_game_tests_to_subscribe = @tests_suites[tests_suite].in_game_tests_for(suite_selected_tests)
-          in_game_tests_to_subscribe.each do |in_game_tests_suite, selected_in_game_tests|
-            selected_in_game_tests_downcase = selected_in_game_tests.map(&:downcase)
-            in_game_tests_subscriptions[in_game_tests_suite] = [] unless in_game_tests_subscriptions.key?(in_game_tests_suite)
-            in_game_tests_subscriptions[in_game_tests_suite] << {
-              tests_suite: tests_suite,
-              in_game_tests: selected_in_game_tests_downcase,
-              selected_tests: suite_selected_tests
-            }
-            merged_in_game_tests[in_game_tests_suite] = [] unless merged_in_game_tests.key?(in_game_tests_suite)
-            merged_in_game_tests[in_game_tests_suite] = (merged_in_game_tests[in_game_tests_suite] + selected_in_game_tests_downcase).uniq
-          end
-        end
-        in_game_tests_runner = InGameTestsRunner.new(@config, @game)
-        in_game_tests_runner.run(merged_in_game_tests) do |in_game_tests_suite, in_game_tests_statuses|
-          # This is a callback called for each in-game test status change.
-          # Update the tests results based on what has been run in-game.
-          # Find all tests suites that are subscribed to those in-game tests.
-          # Be careful that updates can be given for in-game tests suites we were not expecting
-          if in_game_tests_subscriptions.key?(in_game_tests_suite)
-            in_game_tests_subscriptions[in_game_tests_suite].each do |tests_suite_subscription|
-              selected_in_game_tests_statuses = in_game_tests_statuses.slice(*tests_suite_subscription[:in_game_tests])
-              next if selected_in_game_tests_statuses.empty?
+      return if in_game_tests.empty?
 
-              tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
-              tests_suite.set_statuses(
-                tests_suite.
-                  parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
-                  select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
-              )
-            end
+      # Keep track of the mapping between tests suites and in-game tests, per in-game tests suite.
+      # Associated info is:
+      # * *tests_suite* (Symbol): The tests suite that has subscribed to the statuses of some in-game tests of the in-game tests suite.
+      # * *in_game_tests* (Array<String>): List of in-game tests that the tests suite is interested in.
+      # * *selected_tests* (Array<String>): List of selected tests for which in-game tests are useful.
+      # Hash< Symbol, Array< Hash< Symbol, Object > > >
+      in_game_tests_subscriptions = {}
+      # List of all in-game tests to perform, per in-game tests suite
+      # Hash< Symbol, Array< String > >
+      merged_in_game_tests = {}
+      # Get the list of in-game tests we have to run and that we will monitor
+      in_game_tests.each do |tests_suite, suite_selected_tests|
+        in_game_tests_to_subscribe = @tests_suites[tests_suite].in_game_tests_for(suite_selected_tests)
+        in_game_tests_to_subscribe.each do |in_game_tests_suite, selected_in_game_tests|
+          selected_in_game_tests_downcase = selected_in_game_tests.map(&:downcase)
+          in_game_tests_subscriptions[in_game_tests_suite] = [] unless in_game_tests_subscriptions.key?(in_game_tests_suite)
+          in_game_tests_subscriptions[in_game_tests_suite] << {
+            tests_suite: tests_suite,
+            in_game_tests: selected_in_game_tests_downcase,
+            selected_tests: suite_selected_tests
+          }
+          merged_in_game_tests[in_game_tests_suite] = [] unless merged_in_game_tests.key?(in_game_tests_suite)
+          merged_in_game_tests[in_game_tests_suite] = (merged_in_game_tests[in_game_tests_suite] + selected_in_game_tests_downcase).uniq
+        end
+      end
+      in_game_tests_runner = InGameTestsRunner.new(@config, @game)
+      in_game_tests_runner.run(merged_in_game_tests) do |in_game_tests_suite, in_game_tests_statuses|
+        # This is a callback called for each in-game test status change.
+        # Update the tests results based on what has been run in-game.
+        # Find all tests suites that are subscribed to those in-game tests.
+        # Be careful that updates can be given for in-game tests suites we were not expecting
+        if in_game_tests_subscriptions.key?(in_game_tests_suite)
+          in_game_tests_subscriptions[in_game_tests_suite].each do |tests_suite_subscription|
+            selected_in_game_tests_statuses = in_game_tests_statuses.slice(*tests_suite_subscription[:in_game_tests])
+            next if selected_in_game_tests_statuses.empty?
+
+            tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
+            tests_suite.set_statuses(
+              tests_suite.
+                parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
+                select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
+            )
           end
         end
       end
