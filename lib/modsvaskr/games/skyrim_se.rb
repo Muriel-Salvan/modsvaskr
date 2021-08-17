@@ -78,7 +78,7 @@ module Modsvaskr
           path = "#{@tmp_dir}/skse64.7z"
           FileUtils.mkdir_p File.dirname(path)
           log "Download from #{url} => #{path}..."
-          URI.open(url, 'rb') do |web_io|
+          URI.parse(url).open('rb') do |web_io|
             File.write(path, web_io.read, mode: 'wb')
           end
           skse64_tmp_dir = "#{@tmp_dir}/skse64"
