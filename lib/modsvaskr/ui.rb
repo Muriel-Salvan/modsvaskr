@@ -17,7 +17,7 @@ module Modsvaskr
     #
     # Parameters::
     # * *config* (Config): Configuration object
-    def initialize(config:, skyrim: nil)
+    def initialize(config:)
       log "Launch Modsvaskr UI v#{Modsvaskr::VERSION} - Logs in #{Logger.log_file}"
       @config = config
     end
