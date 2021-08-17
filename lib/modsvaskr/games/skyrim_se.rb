@@ -53,12 +53,12 @@ module Modsvaskr
         ]
       end
 
-      # Get the load order.
+      # Read the load order.
       # [API] - This method is mandatory
       #
       # Result::
       # * Array<String>: List of all active plugins, including masters
-      def load_order
+      def read_load_order
         game_esps +
           File.read("#{ENV['USERPROFILE']}/AppData/Local/Skyrim Special Edition/plugins.txt").split("\n").map do |line|
             line =~ /^\*(.+)$/ ? Regexp.last_match(1).downcase : nil

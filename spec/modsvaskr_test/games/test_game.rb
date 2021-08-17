@@ -60,7 +60,7 @@ module ModsvaskrTest
       #
       # Result::
       # * Array<String>: List of all active plugins, including masters
-      def load_order
+      def read_load_order
         game_esps + %w[
           mod1.esp
           mod2.esp

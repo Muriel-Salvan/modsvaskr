@@ -75,7 +75,7 @@ module Modsvaskr
     # * *tests_suite* (Symbol): The tests suite
     # * *statuses* (Array<[String, String]>): Ordered list of couples [test name, test status])
     def set_statuses_for(tests_suite, statuses)
-      @tests_suites[tests_suite].set_statuses(statuses)
+      @tests_suites[tests_suite].statuses = statuses
     end
 
     # Return test information
@@ -156,11 +156,9 @@ module Modsvaskr
             next if selected_in_game_tests_statuses.empty?
 
             tests_suite = @tests_suites[tests_suite_subscription[:tests_suite]]
-            tests_suite.set_statuses(
-              tests_suite.
-                parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
-                select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
-            )
+            tests_suite.statuses = tests_suite.
+              parse_auto_tests_statuses_for(tests_suite_subscription[:selected_tests], { in_game_tests_suite => selected_in_game_tests_statuses }).
+              select { |(test_name, _test_status)| tests_suite_subscription[:selected_tests].include?(test_name) }
           end
         end
       end

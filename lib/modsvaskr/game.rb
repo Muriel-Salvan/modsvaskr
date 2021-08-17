@@ -185,8 +185,8 @@ module Modsvaskr
     #
     # Result::
     # * Array<String>: List of all active plugins, including masters
-    def get_load_order
-      @cache_load_order = load_order unless defined?(@cache_load_order)
+    def load_order
+      @cache_load_order = read_load_order unless defined?(@cache_load_order)
       @cache_load_order
     end
 
@@ -200,7 +200,7 @@ module Modsvaskr
     # * Integer: Base form id, independent from the load order
     def decode_form_id(form_id)
       form_id = form_id.to_i(16) if form_id.is_a?(String)
-      [get_load_order[form_id / 16_777_216], form_id % 16_777_216]
+      [load_order[form_id / 16_777_216], form_id % 16_777_216]
     end
 
   end
