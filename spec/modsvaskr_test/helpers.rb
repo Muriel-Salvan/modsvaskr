@@ -74,6 +74,56 @@ module ModsvaskrTest
       end
     end
 
+    # Run modsvaskr with a generic test game and a given test suite, and makes it discover tests.
+    # Set the default menu to be tested be the menu displaying discovered tests.
+    # This is especially useful to test tests suites.
+    # Use the tests_suite let to set which tests suite is being tested.
+    #
+    # Parameters::
+    # * *csv* (String): The CSV content to be mocked as part of the xEdit discovery [default: '']
+    # * *run* (Boolean): Should we launch the tests after discovering them? [default: false]
+    # * *expect_tests* (Hash<Symbol,Array<String>>): Expected list of in-game tests to be run, per in-game tests suite [default: {}]
+    # * *mock_tests_statuses* (Hash<Symbol, Hash<String, String> > or Array): List of (or single) set of in-game tests statuses, per in-game test name, per in-game tests suite [default: {}]
+    def run_and_discover(csv: '', run: false, expect_tests: {}, mock_tests_statuses: {})
+      self.test_tests_suites = [self.tests_suite]
+      # Register the key sequence getting to the desired menu
+      entering_menu_keys %w[KEY_ENTER KEY_ENTER]
+      exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
+      menu_index_to_test(-3)
+      with_game_dir do
+        with_xedit_dir do
+          mock_xedit_dump_with csv
+          mock_in_game_tests_run(expect_tests: expect_tests, mock_tests_statuses: mock_tests_statuses) if run
+          run_modsvaskr(
+            config: {
+              'games' => [
+                {
+                  'name' => 'Test Game',
+                  'path' => game_dir,
+                  'type' => 'test_game',
+                  'launch_exe' => 'game_launcher.exe',
+                  'min_launch_time_secs' => 1,
+                  'tests_poll_secs' => 1,
+                  'timeout_frozen_tests_secs' => 300
+                }
+              ],
+              'xedit' => xedit_dir
+            },
+            keys: %w[KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER] +
+              if run
+                # Select all tests
+                %w[KEY_HOME KEY_ENTER] +
+                # Run the tests
+                %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER]
+              else
+                # Check the list of tests
+                %w[KEY_HOME d KEY_ESCAPE]
+              end
+          )
+        end
+      end
+    end
+
     # Expect logs to include a given line
     #
     # Parameters::
@@ -184,15 +234,39 @@ module ModsvaskrTest
       @remaining_expected_syscalls.concat(expected_syscalls)
     end
 
+    attr_reader :game_dir, :xedit_dir
+
     # Mock a temporary game directory.
+    # Delete the directory when exiting.
+    #
+    # Parameters::
+    # * Proc: Code called with game dir setup. The code can then call game_dir to get access to the game directory.
+    def with_game_dir
+      with_tmp_dir('game') do |tmp_dir|
+        @game_dir = tmp_dir
+        begin
+          yield
+        ensure
+          @game_dir = nil
+        end
+      end
+    end
+
+    # Mock a temporary xedit directory.
     # Delete the directory when exiting
     #
     # Parameters::
-    # * Proc: Code called with game dir setup
-    #   * Parameters::
-    #     * *game_dir* (String): Game directory that can be used
-    def with_game_dir(&block)
-      with_tmp_dir('game', &block)
+    # * Proc: Code called with xedit dir setup. The code can then call game_dir to get access to the game directory.
+    def with_xedit_dir
+      with_tmp_dir('xedit') do |tmp_dir|
+        @xedit_dir = tmp_dir
+        begin
+          FileUtils.mkdir_p("#{tmp_dir}/Edit Scripts")
+          yield
+        ensure
+          @xedit_dir = nil
+        end
+      end
     end
 
     # Add test game types in the configs created

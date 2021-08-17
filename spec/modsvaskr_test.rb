@@ -52,6 +52,8 @@ RSpec.configure do |config|
     @menu_enter_keys = []
     @menu_exit_keys = []
     @menu_index = nil
+    @game_dir = nil
+    @xedit_dir = nil
     @remaining_expected_syscalls = nil
     example.run
     expect(@remaining_expected_syscalls || []).to eq []

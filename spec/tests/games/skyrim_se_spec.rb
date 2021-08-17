@@ -17,7 +17,7 @@ describe 'Game menu - Skyrim SE' do
         File.write('/tmp/modsvaskr/skse64/skse64/mocked_skse64.txt', 'Dummy content')
       end]
     ]
-    with_game_dir do |game_dir|
+    with_game_dir do
       with_tmp_dir('7-Zip') do |seven_zip_dir|
         run_modsvaskr(
           config: {

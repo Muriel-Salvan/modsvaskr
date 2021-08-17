@@ -2,16 +2,26 @@ describe 'Game tests menu' do
 
   context 'when checking in-game test run' do
 
-    around do |example|
+    # Run the tests menu of a generic test game with the test tests suites.
+    #
+    # Parameters::
+    # * *keys* (Array): Keys to be sent while in the menu
+    def run_game_tests_menu(keys)
+      ModsvaskrTest::TestsSuites::InGameTestsSuite.tests = {
+        'in_game_test_1' => { name: 'In-game test 1' },
+        'in_game_test_2' => { name: 'In-game test 2' },
+        'in_game_test_3' => { name: 'In-game test 3' },
+        'in_game_test_4' => { name: 'In-game test 4' }
+      }
+      self.test_tests_suites = %i[in_game_tests_suite]
       # Register the key sequence getting to the desired menu
       entering_menu_keys %w[KEY_ENTER KEY_ENTER] +
         # Discover tests
         %w[KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER KEY_HOME]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
       menu_index_to_test(-3)
-      with_tmp_dir('test_game') do |game_dir|
-        @game_dir = game_dir
-        @config = {
+      run_modsvaskr(
+        config: {
           'games' => [
             {
               'name' => 'Test Game',
@@ -24,37 +34,30 @@ describe 'Game tests menu' do
               'timeout_interrupt_tests_secs' => 1
             }
           ]
-        }
-        ModsvaskrTest::TestsSuites::InGameTestsSuite.tests = {
-          'in_game_test_1' => { name: 'In-game test 1' },
-          'in_game_test_2' => { name: 'In-game test 2' },
-          'in_game_test_3' => { name: 'In-game test 3' },
-          'in_game_test_4' => { name: 'In-game test 4' }
-        }
+        },
+        keys: keys
+      )
+    end
+
+    around(:each) do |example|
+      with_game_dir do
         example.run
       end
     end
 
-    before do
-      self.test_tests_suites = %i[in_game_tests_suite]
-    end
-
     it 'does not run in-game tests if AutoTest is not installed' do
-      run_modsvaskr(
-        config: @config,
-        # Select only in_game_test_2
-        keys: %w[KEY_ENTER KEY_ENTER d KEY_DOWN KEY_ENTER KEY_ESCAPE] +
-          # Run tests
-          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-          # Check tests statuses
-          %w[KEY_HOME d KEY_ESCAPE]
-      )
+      # Select only in_game_test_2
+      run_game_tests_menu %w[KEY_ENTER KEY_ENTER d KEY_DOWN KEY_ENTER KEY_ESCAPE] +
+        # Run tests
+        %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+        # Check tests statuses
+        %w[KEY_HOME d KEY_ESCAPE]
       expect_menu_items_to_include('[+] in_game_tests_suite - 0 / 4')
       expect_menu_items_to_include('[ ] in_game_test_1 -  - In-game test 1', menu_idx: -4)
       expect_menu_items_to_include('[*] in_game_test_2 -  - In-game test 2', menu_idx: -4)
       expect_menu_items_to_include('[ ] in_game_test_3 -  - In-game test 3', menu_idx: -4)
       expect_menu_items_to_include('[ ] in_game_test_4 -  - In-game test 4', menu_idx: -4)
-      expect_logs_to_include(%r{Missing file #{Regexp.escape(@game_dir)}/Data/AutoTest\.esp\. In-game tests will be disabled\. Please install the AutoTest mod\.})
+      expect_logs_to_include(%r{Missing file #{Regexp.escape(game_dir)}/Data/AutoTest\.esp\. In-game tests will be disabled\. Please install the AutoTest mod\.})
     end
 
     context 'when running in-game tests' do
@@ -73,15 +76,12 @@ describe 'Game tests menu' do
           expect_tests: { autotestsuite_2: %w[autotest_21] },
           mock_tests_statuses: { autotestsuite_2: { 'autotest_21' => 'ok' } }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select only in_game_test_2
-          keys: %w[KEY_ENTER KEY_ENTER d KEY_DOWN KEY_ENTER KEY_ESCAPE] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select only in_game_test_2
+        run_game_tests_menu %w[KEY_ENTER KEY_ENTER d KEY_DOWN KEY_ENTER KEY_ESCAPE] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[+] in_game_tests_suite - 1 / 4')
         expect_menu_items_to_include('[ ] in_game_test_1 -  - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -133,15 +133,12 @@ describe 'Game tests menu' do
             }
           }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -181,15 +178,12 @@ describe 'Game tests menu' do
             }
           }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -199,9 +193,9 @@ describe 'Game tests menu' do
 
       it 'clears statuses of required in-game tests before running in-game testing' do
         # Simulate a previous run that has put statuses
-        FileUtils.mkdir_p "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData"
+        FileUtils.mkdir_p "#{game_dir}/Data/SKSE/Plugins/StorageUtilData"
         File.write(
-          "#{@game_dir}/Data/SKSE/Plugins/StorageUtilData/AutoTest_autotestsuite_1_Statuses.json",
+          "#{game_dir}/Data/SKSE/Plugins/StorageUtilData/AutoTest_autotestsuite_1_Statuses.json",
           {
             string: {
               autotest_11: 'old_ok',
@@ -211,9 +205,9 @@ describe 'Game tests menu' do
             }
           }.to_json
         )
-        FileUtils.mkdir_p "#{@game_dir}/Data/Modsvaskr/Tests"
+        FileUtils.mkdir_p "#{game_dir}/Data/Modsvaskr/Tests"
         File.write(
-          "#{@game_dir}/Data/Modsvaskr/Tests/Statuses_in_game_tests_suite.json",
+          "#{game_dir}/Data/Modsvaskr/Tests/Statuses_in_game_tests_suite.json",
           [
             %w[in_game_test_1 old_ok],
             %w[in_game_test_2 ok],
@@ -246,15 +240,12 @@ describe 'Game tests menu' do
             }
           }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select only in_game_test_3 and in_game_test_4
-          keys: %w[KEY_ENTER d KEY_DOWN KEY_DOWN KEY_ENTER KEY_DOWN KEY_ENTER KEY_ESCAPE] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select only in_game_test_3 and in_game_test_4
+        run_game_tests_menu %w[KEY_ENTER d KEY_DOWN KEY_DOWN KEY_ENTER KEY_DOWN KEY_ENTER KEY_ESCAPE] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[+] in_game_tests_suite - 3 / 4')
         expect_menu_items_to_include('[ ] in_game_test_1 - old_ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[ ] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -306,15 +297,12 @@ describe 'Game tests menu' do
             }
           }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 3 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -343,15 +331,12 @@ describe 'Game tests menu' do
             { autotestsuite_1: { 'autotest_4' => 'ok' } }
           ]
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 3 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - failed - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -382,15 +367,12 @@ describe 'Game tests menu' do
           },
           mock_tests_execution_stopped_by_user: true
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 2 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -435,15 +417,12 @@ describe 'Game tests menu' do
           },
           mock_tests_execution_end: 'end'
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -489,15 +468,12 @@ describe 'Game tests menu' do
           },
           mock_tests_execution_end: 'end'
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -551,15 +527,12 @@ describe 'Game tests menu' do
           },
           mock_tests_execution_end: 'end'
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 3 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -614,15 +587,12 @@ describe 'Game tests menu' do
           },
           mock_tests_execution_end: 'end'
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 3 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -673,15 +643,12 @@ describe 'Game tests menu' do
             }
           }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -736,15 +703,12 @@ describe 'Game tests menu' do
             }
           }
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 4 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - ok - In-game test 2', menu_idx: -4)
@@ -817,15 +781,12 @@ describe 'Game tests menu' do
           },
           mock_tests_execution_end: 'end'
         )
-        run_modsvaskr(
-          config: @config,
-          # Select all in-game tests
-          keys: %w[KEY_ENTER] +
-            # Run tests
-            %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
-            # Check tests statuses
-            %w[KEY_HOME d KEY_ESCAPE]
-        )
+        # Select all in-game tests
+        run_game_tests_menu %w[KEY_ENTER] +
+          # Run tests
+          %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER] +
+          # Check tests statuses
+          %w[KEY_HOME d KEY_ESCAPE]
         expect_menu_items_to_include('[*] in_game_tests_suite - 3 / 4')
         expect_menu_items_to_include('[*] in_game_test_1 - ok - In-game test 1', menu_idx: -4)
         expect_menu_items_to_include('[*] in_game_test_2 - failed_ctd - In-game test 2', menu_idx: -4)
