@@ -222,6 +222,8 @@ module ModsvaskrTest
         # First invocation for this test case
         @remaining_expected_syscalls = []
         @remaining_expected_syscalls << ['gem list modsvaskr --remote', "modsvaskr (#{Modsvaskr::VERSION})"] if add_init_mocks
+        # System calls can be done at any level
+        # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Object).to receive(:system) do |_receiver, cmd|
           mocked_result = expect_next_syscall(cmd)
           mocked_result[:exit_code] == 0
@@ -230,6 +232,7 @@ module ModsvaskrTest
           mocked_result = expect_next_syscall(cmd)
           mocked_result[:stdout]
         end
+        # rubocop:enable RSpec/AnyInstance
       end
       @remaining_expected_syscalls.concat(expected_syscalls)
     end
