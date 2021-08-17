@@ -57,7 +57,7 @@ module Modsvaskr
     #   Parameters::
     #   * *row* (Array<String>): CSV row
     def parse_csv(csv, &row_block)
-      CSV.parse(Encoding.to_utf8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&row_block)
+      CSV.parse(Encoding.to_utf_8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&row_block)
     end
 
   end

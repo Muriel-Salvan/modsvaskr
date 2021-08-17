@@ -105,9 +105,7 @@ Naming/VariableNumber:
     - ipv4
     - net0
     - popen3
-    # By convention KeePass fields are CamelCase
-    - Field1
-    - Field2
+    - install_skse64
 
 # Don't plague files with pre-processor directives
 # Cop supports --auto-correct.

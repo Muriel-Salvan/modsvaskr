@@ -9,7 +9,7 @@ module Modsvaskr
     # * *str* (String): The string to convert
     # Result::
     # * String: The converted string
-    def self.to_utf8(str)
+    def self.to_utf_8(str)
       orig_encoding = str.encoding
       encoding = nil
       begin

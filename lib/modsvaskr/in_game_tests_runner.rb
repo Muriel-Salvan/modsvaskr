@@ -300,23 +300,23 @@ module Modsvaskr
     # Diff between test statuses.
     #
     # Parameters::
-    # * *statuses1* (Hash<Symbol, Array<[String, String]> >): Test statuses, per test name (in a sorted list), per tests suite
-    # * *statuses2* (Hash<Symbol, Array<[String, String]> >): Test statuses, per test name (in a sorted list), per tests suite
+    # * *statuses_1* (Hash<Symbol, Array<[String, String]> >): Test statuses, per test name (in a sorted list), per tests suite
+    # * *statuses_2* (Hash<Symbol, Array<[String, String]> >): Test statuses, per test name (in a sorted list), per tests suite
     # Result::
-    # * Hash<Symbol, Array<[String, String]> >: statuses2 - statuses1
-    def diff_statuses(statuses1, statuses2)
+    # * Hash<Symbol, Array<[String, String]> >: statuses_2 - statuses_1
+    def diff_statuses(statuses_1, statuses_2)
       statuses = {}
-      statuses1.each do |tests_suite, tests_info|
-        if statuses2.key?(tests_suite)
+      statuses_1.each do |tests_suite, tests_info|
+        if statuses_2.key?(tests_suite)
           # Handle Hashes as it will be faster
-          statuses1_for_test = tests_info.to_h
-          statuses2_for_test = (statuses2[tests_suite]).to_h
-          statuses1_for_test.each do |test_name, status1|
-            if statuses2_for_test.key?(test_name)
-              if statuses2_for_test[test_name] != status1
+          statuses_1_for_test = tests_info.to_h
+          statuses_2_for_test = (statuses_2[tests_suite]).to_h
+          statuses_1_for_test.each do |test_name, status_1|
+            if statuses_2_for_test.key?(test_name)
+              if statuses_2_for_test[test_name] != status_1
                 # Change in status
                 statuses[tests_suite] = [] unless statuses.key?(tests_suite)
-                statuses[tests_suite] << [test_name, statuses2_for_test[test_name]]
+                statuses[tests_suite] << [test_name, statuses_2_for_test[test_name]]
               end
             else
               # This test has been removed
@@ -324,21 +324,21 @@ module Modsvaskr
               statuses[tests_suite] << [test_name, 'deleted']
             end
           end
-          statuses2_for_test.each do |test_name, status2|
-            next if statuses1_for_test.key?(test_name)
+          statuses_2_for_test.each do |test_name, status_2|
+            next if statuses_1_for_test.key?(test_name)
 
             # This test has been added
             statuses[tests_suite] = [] unless statuses.key?(tests_suite)
-            statuses[tests_suite] << [test_name, status2]
+            statuses[tests_suite] << [test_name, status_2]
           end
         else
           # All test statuses have been removed
           statuses[tests_suite] = tests_info.map { |(test_name, _test_status)| [test_name, 'deleted'] }
         end
       end
-      statuses2.each do |tests_suite, tests_info|
+      statuses_2.each do |tests_suite, tests_info|
         # All test statuses have been added
-        statuses[tests_suite] = tests_info unless statuses1.key?(tests_suite)
+        statuses[tests_suite] = tests_info unless statuses_1.key?(tests_suite)
       end
       statuses
     end
