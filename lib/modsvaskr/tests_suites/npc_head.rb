@@ -4,6 +4,7 @@ module Modsvaskr
 
   module TestsSuites
 
+    # Test NPCs by taking head screenshots
     class NpcHead < TestsSuites::Npc
 
       # Return the in-game tests suite to which we forward the tests to be run

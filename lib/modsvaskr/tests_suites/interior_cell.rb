@@ -4,6 +4,7 @@ module Modsvaskr
 
   module TestsSuites
 
+    # Test interior cells by using coc and camera spanning
     class InteriorCell < TestsSuite
 
       include InGameTestsSuite

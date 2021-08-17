@@ -4,6 +4,7 @@ module Modsvaskr
 
   module TestsSuites
 
+    # Test NPCs by taking screenshots
     class Npc < TestsSuite
 
       include InGameTestsSuite

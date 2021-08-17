@@ -7,6 +7,7 @@ require 'modsvaskr/version'
 
 module Modsvaskr
 
+  # Main UI, using ncurses
   class Ui
 
     include RunCmd

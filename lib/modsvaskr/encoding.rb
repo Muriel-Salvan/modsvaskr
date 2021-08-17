@@ -1,5 +1,6 @@
 module Modsvaskr
 
+  # Provide helpers to encode Windows and Linux strings to UTF-8
   module Encoding
 
     # Convert a string to UTF-8

@@ -4,6 +4,7 @@ module Modsvaskr
 
   module TestsSuites
 
+    # Test exterior cells by using cow and camera spanning
     class ExteriorCell < TestsSuite
 
       include InGameTestsSuite

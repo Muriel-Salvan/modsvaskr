@@ -6,6 +6,7 @@ require 'modsvaskr/in_game_tests_runner'
 
 module Modsvaskr
 
+  # Execute a bunch of tests on games
   class TestsRunner
 
     include Logger
