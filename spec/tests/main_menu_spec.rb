@@ -76,8 +76,8 @@ describe 'Main menu' do
             'launch_exe' => 'game_launcher.exe'
           },
           {
-            'name' => 'Test Game 3',
-            'path' => '/path/to/test_game_3 - それほど素晴らしいゲームではありません',
+            'name' => 'Test Game 3 - それほど素晴らしいゲームではありません',
+            'path' => '/path/to/test_game_3',
             'type' => 'test_game',
             'launch_exe' => 'game_launcher.exe'
           }
@@ -95,6 +95,7 @@ describe 'Main menu' do
     # rubocop:enable Style/AsciiComments
     expect_menu_items_to_include(/Test Game 1 - .+/)
     expect_menu_items_to_include(/Test Game 2 - .+/)
+    expect_menu_items_to_include(/Test Game 3 - .+/)
   end
 
   it 'initializes the game plugin when used' do
