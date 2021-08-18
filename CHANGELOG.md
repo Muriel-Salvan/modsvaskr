@@ -1,3 +1,9 @@
+# [v0.1.12](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.11...v0.1.12) (2021-08-18 13:12:29)
+
+### Patches
+
+* [Added rubocop and corrected lint issues raised](https://github.com/Muriel-Salvan/modsvaskr/commit/4d434ebe8da117a00a2d1ac1f09c992036f9d7d9)
+
 # [v0.1.11](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.10...v0.1.11) (2021-02-25 10:53:19)
 
 ### Patches
