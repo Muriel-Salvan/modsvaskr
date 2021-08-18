@@ -5,7 +5,9 @@ module ModsvaskrTest
     class TestsSuite < Modsvaskr::TestsSuite
 
       class << self
-        attr_accessor *%i[tests mocked_statuses]
+
+        attr_accessor(*%i[tests mocked_statuses])
+
       end
 
       # Discover the list of tests information that could be run.

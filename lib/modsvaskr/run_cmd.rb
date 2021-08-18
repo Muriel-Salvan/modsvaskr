@@ -1,5 +1,6 @@
 module Modsvaskr
 
+  # Common interface to execute commands in a robust way
   module RunCmd
 
     # Run a given command with eventual parameters

@@ -53,15 +53,15 @@ module Modsvaskr
         ]
       end
 
-      # Get the load order.
+      # Read the load order.
       # [API] - This method is mandatory
       #
       # Result::
       # * Array<String>: List of all active plugins, including masters
-      def load_order
+      def read_load_order
         game_esps +
           File.read("#{ENV['USERPROFILE']}/AppData/Local/Skyrim Special Edition/plugins.txt").split("\n").map do |line|
-            line =~ /^\*(.+)$/ ? $1.downcase : nil
+            line =~ /^\*(.+)$/ ? Regexp.last_match(1).downcase : nil
           end.compact
       end
 
@@ -78,7 +78,7 @@ module Modsvaskr
           path = "#{@tmp_dir}/skse64.7z"
           FileUtils.mkdir_p File.dirname(path)
           log "Download from #{url} => #{path}..."
-          URI.open(url, 'rb') do |web_io|
+          URI.parse(url).open('rb') do |web_io|
             File.write(path, web_io.read, mode: 'wb')
           end
           skse64_tmp_dir = "#{@tmp_dir}/skse64"

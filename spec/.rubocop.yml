@@ -1,0 +1,52 @@
+# This file defines rules for spec files only.
+
+inherit_from:
+  - ../.rubocop.yml
+
+AllCops:
+  NewCops: enable
+
+# Empty blocks are perfectly valid, especially in test cases
+# Configuration parameters: AllowComments, AllowEmptyLambdas.
+Lint/EmptyBlock:
+  Enabled: false
+
+# In case of mocking some methods, keyword arguments may be called but not used in the testing code block
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoreEmptyBlocks, AllowUnusedKeywordArguments.
+Lint/UnusedBlockArgument:
+  AllowUnusedKeywordArguments: true
+
+# Most test cases are integration tests of the executable, so they don't relate to a class.
+# Configuration parameters: IgnoredMetadata.
+RSpec/DescribeClass:
+  Enabled: false
+
+# Examples can be complex and limiting them might produce useless methods calls complexity
+# Configuration parameters: CountAsOne.
+RSpec/ExampleLength:
+  Exclude:
+    - '**/*'
+
+# Message expectations and test spies respond to a different testing usecase, and one can not always replace the other.
+# Configuration parameters: .
+# SupportedStyles: have_received, receive
+RSpec/MessageSpies:
+  Exclude:
+    - '**/*'
+
+# Multiple expectations serve in checking a feature as a whole, and removes the performance hit of re-instantiating subjects between test cases.
+RSpec/MultipleExpectations:
+  Exclude:
+    - '**/*'
+
+# Separating the mocking from the expectation duplicates the code and increases the risk of human errors.
+RSpec/StubbedMock:
+  Exclude:
+    - '**/*'
+
+# As test cases are big for some classes (testing plugins, and various methods from plugins), limiting to simple file paths is not an option.
+# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
+# Include: **/*_spec*rb*, **/spec/**/*
+RSpec/FilePath:
+  SpecSuffixOnly: true

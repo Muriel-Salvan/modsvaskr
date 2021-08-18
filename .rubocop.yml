@@ -1,0 +1,147 @@
+require: rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.6
+  NewCops: enable
+  Exclude:
+    # Bundler-generated files
+    - 'vendor/**/*'
+
+# Limiting line length causes often less readable code.
+# Cop supports --auto-correct.
+# Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Layout/LineLength:
+  Enabled: false
+
+# Method chaining is more readable with trailing dots.
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: leading, trailing
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+# Empty lines around blocks is more readable for RSpec contexts
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: empty_lines, no_empty_lines
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+# Empty lines around class bodies is more readable
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines, beginning_only, ending_only
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines
+
+# Empty lines around module bodies is more readable
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines
+Layout/EmptyLinesAroundModuleBody:
+  EnforcedStyle: empty_lines
+
+# Prefer clean indentation in method chaining
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, IndentationWidth.
+# SupportedStyles: aligned, indented, indented_relative_to_receiver
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Trailing whitespaces are allowed in heredocs.
+# Cop supports --auto-correct.
+# Configuration parameters: AllowInHeredoc.
+Layout/TrailingWhitespace:
+  AllowInHeredoc: true
+
+# Complexity metrics are not mandatory
+# Configuration parameters: IgnoredMethods, CountRepeatedAttributes.
+Metrics/AbcSize:
+  Enabled: false
+
+# Configuration parameters: CountComments, CountAsOne, ExcludedMethods, IgnoredMethods.
+# IgnoredMethods: refine
+Metrics/BlockLength:
+  Enabled: false
+
+# Configuration parameters: CountBlocks.
+Metrics/BlockNesting:
+  Enabled: false
+
+# Configuration parameters: CountComments, CountAsOne.
+Metrics/ClassLength:
+  Enabled: false
+
+# Configuration parameters: IgnoredMethods.
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+# Configuration parameters: CountComments, CountAsOne, ExcludedMethods, IgnoredMethods.
+Metrics/MethodLength:
+  Enabled: false
+
+# Configuration parameters: CountComments, CountAsOne.
+Metrics/ModuleLength:
+  Enabled: false
+
+# Configuration parameters: CountKeywordArgs, MaxOptionalParameters.
+Metrics/ParameterLists:
+  Enabled: false
+
+# Configuration parameters: IgnoredMethods.
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+# Use snake case for variables containing numbers
+# Configuration parameters: EnforcedStyle, CheckMethodNames, CheckSymbols, AllowedIdentifiers.
+# SupportedStyles: snake_case, normalcase, non_integer
+# AllowedIdentifiers: capture3, iso8601, rfc1123_date, rfc822, rfc2822, rfc3339
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+  AllowedIdentifiers:
+    - bz2
+    - capture3
+    - ipv4
+    - net0
+    - popen3
+    - install_skse64
+
+# Don't plague files with pre-processor directives
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: always, always_true, never
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Doesn't make code more readable to introduce useless technical variables
+Style/MultilineBlockChain:
+  Enabled: false
+
+# Don't plague any constant declaration with freeze calls
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: literals, strict
+Style/MutableConstant:
+  Enabled: false
+
+# Don't plague rescue clauses for standard errors
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: implicit, explicit
+Style/RescueStandardError:
+  EnforcedStyle: implicit
+
+# Multi-line chaining should be indented in a simple way
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, IndentationWidth.
+# SupportedStyles: aligned, indented
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+# Empty methods on 2 lines are more readable
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: compact, expanded
+Style/EmptyMethod:
+  EnforcedStyle: expanded

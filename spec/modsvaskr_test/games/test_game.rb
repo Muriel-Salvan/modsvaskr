@@ -10,16 +10,20 @@ module ModsvaskrTest
     class TestGame < Modsvaskr::Game
 
       class << self
-        attr_accessor *%i[
-          menu_proc
-          init_proc
-        ]
+
+        attr_accessor(
+          *%i[
+            menu_proc
+            init_proc
+          ]
+        )
+
       end
 
       # Initialize the game
       # [API] - This method is optional
       def init
-        TestGame.init_proc.call unless TestGame.init_proc.nil?
+        TestGame.init_proc&.call
       end
 
       # Complete the game menu
@@ -28,7 +32,7 @@ module ModsvaskrTest
       # Parameters::
       # * *menu* (CursesMenu): Menu to complete
       def complete_game_menu(menu)
-        TestGame.menu_proc.call(menu) unless TestGame.menu_proc.nil?
+        TestGame.menu_proc&.call(menu)
       end
 
       # Get the game running executable name (that can be found in a tasks manager)
@@ -56,7 +60,7 @@ module ModsvaskrTest
       #
       # Result::
       # * Array<String>: List of all active plugins, including masters
-      def load_order
+      def read_load_order
         game_esps + %w[
           mod1.esp
           mod2.esp

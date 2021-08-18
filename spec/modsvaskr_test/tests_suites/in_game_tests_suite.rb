@@ -5,7 +5,9 @@ module ModsvaskrTest
     class InGameTestsSuite < Modsvaskr::TestsSuite
 
       class << self
-        attr_accessor *%i[tests in_game_tests_for parse_auto_tests_statuses_for]
+
+        attr_accessor(*%i[tests in_game_tests_for parse_auto_tests_statuses_for])
+
       end
 
       # Discover the list of tests information that could be run.

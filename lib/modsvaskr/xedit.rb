@@ -30,23 +30,23 @@ module Modsvaskr
     # * *script* (String): Script name, as defined in xedit_scripts (without the Modsvaskr_ prefix and .pas suffix)
     # * *only_once* (Boolean): If true, then make sure this script is run only once by instance [default: false]
     def run_script(script, only_once: false)
-      if !only_once || !@runs.key?(script)
-        FileUtils.cp "#{__dir__}/../../xedit_scripts/Modsvaskr_#{script}.pas", "#{@install_path}/Edit Scripts/Modsvaskr_#{script}.pas"
-        run_cmd(
-          {
-            dir: @install_path,
-            exe: 'SSEEdit.exe'
-          },
-          args: %W[
-            -IKnowWhatImDoing
-            -AllowMasterFilesEdit
-            -SSE
-            -autoload
-            -script:"Modsvaskr_#{script}.pas"
-          ]
-        )
-        @runs[script] = nil
-      end
+      return if only_once && @runs.key?(script)
+
+      FileUtils.cp "#{__dir__}/../../xedit_scripts/Modsvaskr_#{script}.pas", "#{@install_path}/Edit Scripts/Modsvaskr_#{script}.pas"
+      run_cmd(
+        {
+          dir: @install_path,
+          exe: 'SSEEdit.exe'
+        },
+        args: %W[
+          -IKnowWhatImDoing
+          -AllowMasterFilesEdit
+          -SSE
+          -autoload
+          -script:"Modsvaskr_#{script}.pas"
+        ]
+      )
+      @runs[script] = nil
     end
 
     # Parse a CSV that has been dumped by a previous run of xEdit
@@ -57,7 +57,7 @@ module Modsvaskr
     #   Parameters::
     #   * *row* (Array<String>): CSV row
     def parse_csv(csv, &row_block)
-      CSV.parse(Encoding.to_utf8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&row_block)
+      CSV.parse(Encoding.to_utf_8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&row_block)
     end
 
   end

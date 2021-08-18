@@ -63,14 +63,64 @@ module ModsvaskrTest
       config['auto_keys'] << 'KEY_ESCAPE' unless debug?
       config['no_prompt'] = !debug?
       with_tmp_dir('workspace') do |workspace_dir|
-        Modsvaskr::Logger.stdout_io = Logger.new('/dev/null') unless debug?
+        Modsvaskr::Logger.stdout_io = Logger.new(nil) unless debug?
         Modsvaskr::Logger.log_file = "#{workspace_dir}/modsvaskr_test.log"
         config_file = "#{workspace_dir}/modsvaskr.yaml"
         File.write(config_file, config.to_yaml)
         log_debug "Run Modsvaskr with test config:\n#{File.read(config_file)}\n"
         Modsvaskr::Ui.new(config: Modsvaskr::Config.new(config_file)).run
         @last_logs = File.read(Modsvaskr::Logger.log_file).split("\n")
-        client_code.call unless client_code.nil?
+        client_code&.call
+      end
+    end
+
+    # Run modsvaskr with a generic test game and a given test suite, and makes it discover tests.
+    # Set the default menu to be tested be the menu displaying discovered tests.
+    # This is especially useful to test tests suites.
+    # Use the tests_suite let to set which tests suite is being tested.
+    #
+    # Parameters::
+    # * *csv* (String): The CSV content to be mocked as part of the xEdit discovery [default: '']
+    # * *run* (Boolean): Should we launch the tests after discovering them? [default: false]
+    # * *expect_tests* (Hash<Symbol,Array<String>>): Expected list of in-game tests to be run, per in-game tests suite [default: {}]
+    # * *mock_tests_statuses* (Hash<Symbol, Hash<String, String> > or Array): List of (or single) set of in-game tests statuses, per in-game test name, per in-game tests suite [default: {}]
+    def run_and_discover(csv: '', run: false, expect_tests: {}, mock_tests_statuses: {})
+      self.test_tests_suites = [tests_suite]
+      # Register the key sequence getting to the desired menu
+      entering_menu_keys %w[KEY_ENTER KEY_ENTER]
+      exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
+      menu_index_to_test(-3)
+      with_game_dir do
+        with_xedit_dir do
+          mock_xedit_dump_with csv
+          mock_in_game_tests_run(expect_tests: expect_tests, mock_tests_statuses: mock_tests_statuses) if run
+          run_modsvaskr(
+            config: {
+              'games' => [
+                {
+                  'name' => 'Test Game',
+                  'path' => game_dir,
+                  'type' => 'test_game',
+                  'launch_exe' => 'game_launcher.exe',
+                  'min_launch_time_secs' => 1,
+                  'tests_poll_secs' => 1,
+                  'timeout_frozen_tests_secs' => 300
+                }
+              ],
+              'xedit' => xedit_dir
+            },
+            keys: %w[KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER] +
+              if run
+                # Select all tests
+                %w[KEY_HOME KEY_ENTER] +
+                # Run the tests
+                %w[KEY_HOME KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_DOWN KEY_ENTER]
+              else
+                # Check the list of tests
+                %w[KEY_HOME d KEY_ESCAPE]
+              end
+          )
+        end
       end
     end
 
@@ -103,15 +153,15 @@ module ModsvaskrTest
       menu_idx = -1 if menu_idx.nil?
       expect(ModsvaskrTest.screenshots.size).to be > 0
       error_msg_proc = proc do
-        <<~EOS
+        <<~EO_ERROR_MESSAGE
           Expected menu ##{menu_idx} to have item "#{line}", but got this instead:
           #{
-            ModsvaskrTest.screenshots[menu_idx][3..-3].map do |line|
-              stripped_line = line.strip
+            ModsvaskrTest.screenshots[menu_idx][3..-3].map do |screen_line|
+              stripped_line = screen_line.strip
               stripped_line.empty? ? nil : stripped_line
             end.compact.join("\n")
           }
-        EOS
+        EO_ERROR_MESSAGE
       end
       if line.is_a?(Regexp)
         expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to eq(true), error_msg_proc
@@ -172,6 +222,8 @@ module ModsvaskrTest
         # First invocation for this test case
         @remaining_expected_syscalls = []
         @remaining_expected_syscalls << ['gem list modsvaskr --remote', "modsvaskr (#{Modsvaskr::VERSION})"] if add_init_mocks
+        # System calls can be done at any level
+        # rubocop:disable RSpec/AnyInstance
         allow_any_instance_of(Object).to receive(:system) do |_receiver, cmd|
           mocked_result = expect_next_syscall(cmd)
           mocked_result[:exit_code] == 0
@@ -180,20 +232,43 @@ module ModsvaskrTest
           mocked_result = expect_next_syscall(cmd)
           mocked_result[:stdout]
         end
+        # rubocop:enable RSpec/AnyInstance
       end
       @remaining_expected_syscalls.concat(expected_syscalls)
     end
 
+    attr_reader :game_dir, :xedit_dir
+
     # Mock a temporary game directory.
+    # Delete the directory when exiting.
+    #
+    # Parameters::
+    # * Proc: Code called with game dir setup. The code can then call game_dir to get access to the game directory.
+    def with_game_dir
+      with_tmp_dir('game') do |tmp_dir|
+        @game_dir = tmp_dir
+        begin
+          yield
+        ensure
+          @game_dir = nil
+        end
+      end
+    end
+
+    # Mock a temporary xedit directory.
     # Delete the directory when exiting
     #
     # Parameters::
-    # * Proc: Code called with game dir setup
-    #   * Parameters::
-    #     * *game_dir* (String): Game directory that can be used
-    def with_game_dir
-      with_tmp_dir('game') do |game_dir|
-        yield game_dir
+    # * Proc: Code called with xedit dir setup. The code can then call game_dir to get access to the game directory.
+    def with_xedit_dir
+      with_tmp_dir('xedit') do |tmp_dir|
+        @xedit_dir = tmp_dir
+        begin
+          FileUtils.mkdir_p("#{tmp_dir}/Edit Scripts")
+          yield
+        ensure
+          @xedit_dir = nil
+        end
       end
     end
 
@@ -203,7 +278,7 @@ module ModsvaskrTest
         config = org_new.call(file)
         # Add test game plugins
         config.instance_eval do
-          @game_types.merge!(Hash[
+          @game_types.merge!(
             Dir.glob("#{__dir__}/games/*.rb").map do |game_type_file|
               require game_type_file
               base_name = File.basename(game_type_file, '.rb')
@@ -211,8 +286,8 @@ module ModsvaskrTest
                 base_name.to_sym,
                 ModsvaskrTest::Games.const_get(base_name.split('_').collect(&:capitalize).join.to_sym)
               ]
-            end
-          ])
+            end.to_h
+          )
         end
         config
       end
@@ -221,23 +296,23 @@ module ModsvaskrTest
     # Set tests plugins defined only for tests
     #
     # Parameters::
-    # * *selected_tests_suites* (Array<Symbol> or nil): Tests that are available for tests, or nil for all tests [default = nil]
-    def set_test_tests_suites(selected_tests_suites = nil)
+    # * *selected_tests_suites* (Array<Symbol> or nil): Tests that are available for tests, or nil for all tests
+    def test_tests_suites=(selected_tests_suites)
       allow(Modsvaskr::TestsRunner).to receive(:new).and_wrap_original do |org_new, config, game|
         tests_runner = org_new.call(config, game)
         tests_runner.instance_exec do
           @tests_suites = @tests_suites.
             # First add tests suites defined in tests
-            merge(Hash[Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
+            merge(Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
               require tests_suite_file
               tests_suite = File.basename(tests_suite_file, '.rb').to_sym
               [
                 tests_suite,
                 ModsvaskrTest::TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, game)
               ]
-            end]).
+            end.to_h).
             # Then filter them if needed
-            select { |tests_suite, _tests_suite_instance| selected_tests_suites.nil? || selected_tests_suites.include?(tests_suite)}
+            select { |tests_suite, _tests_suite_instance| selected_tests_suites.nil? || selected_tests_suites.include?(tests_suite) }
         end
         tests_runner
       end
@@ -293,7 +368,7 @@ module ModsvaskrTest
       unless File.exist?(autotest_esp)
         # Create the AutoTest plugin
         expect(ElderScrollsPlugin).to receive(:new).with("#{@game_dir}/Data/AutoTest.esp") do
-          mocked_esp = double('AutoTest esp plugin')
+          mocked_esp = instance_double(ElderScrollsPlugin)
           expect(mocked_esp).to receive(:to_json) do
             {
               sub_chunks: [
@@ -390,7 +465,8 @@ module ModsvaskrTest
       expected_cmd, mocked_syscall = @remaining_expected_syscalls.shift
       raise "No more system calls were expected, but received a call to system #{cmd}" if expected_cmd.nil?
       # Check that we wanted this particular command to be mocked
-      raise "Expected system call #{expected_cmd}, but received a call to system #{cmd}" if (expected_cmd.is_a?(Regexp) && !(cmd =~ expected_cmd)) || (expected_cmd.is_a?(String) && cmd != expected_cmd)
+      raise "Expected system call #{expected_cmd}, but received a call to system #{cmd}" if (expected_cmd.is_a?(Regexp) && cmd !~ expected_cmd) || (expected_cmd.is_a?(String) && cmd != expected_cmd)
+
       # We're good. mock it.
       mocked_result = mocked_syscall.is_a?(Proc) ? mocked_syscall.call(cmd) : mocked_syscall
       result =

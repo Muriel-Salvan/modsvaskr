@@ -4,6 +4,7 @@ require 'modsvaskr_test/helpers'
 require 'modsvaskr_test/games/test_game'
 require 'modsvaskr_test/tests_suites/in_game_tests_suite'
 require 'modsvaskr_test/tests_suites/tests_suite'
+require "#{Gem.loaded_specs['curses_menu'].full_gem_path}/spec/curses_menu_test.rb"
 
 module ModsvaskrTest
 
@@ -20,32 +21,10 @@ module ModsvaskrTest
 
     # Finalize the curses menu window
     def curses_menu_finalize
-      ModsvaskrTest.screenshots << capture_screenshot
       result = super
-      puts ModsvaskrTest.screenshots.last.select { |line| !line.strip.empty? }.join("\n") if ModsvaskrTest::Helpers.debug?
+      ModsvaskrTest.screenshots << @screenshot.map { |line| line.map { |char_info| char_info[:char] }.join }
+      puts ModsvaskrTest.screenshots.last.reject { |line| line.strip.empty? }.join("\n") if ModsvaskrTest::Helpers.debug?
       result
-    end
-
-    private
-
-    # Get a screenshot of the menu
-    #
-    # Result::
-    # * Array<String>: List of lines
-    def capture_screenshot
-      # Curses is initialized
-      window = Curses.stdscr
-      old_x = window.curx
-      old_y = window.cury
-      chars = []
-      window.maxy.times do |idx_y|
-        window.maxx.times do |idx_x|
-          window.setpos idx_y, idx_x
-          chars << window.inch
-        end
-      end
-      window.setpos old_y, old_x
-      chars.map(&:chr).each_slice(window.maxx).map(&:join)
     end
 
   end
@@ -53,12 +32,14 @@ module ModsvaskrTest
 end
 
 class CursesMenu
+
   prepend ModsvaskrTest::CursesMenuPatch
+
 end
 
 RSpec.configure do |config|
   config.include ModsvaskrTest::Helpers
-  config.around(:each) do |example|
+  config.around do |example|
     # Initialize all variables to ensure tests independence
     ModsvaskrTest.screenshots = []
     ModsvaskrTest::Games::TestGame.init_proc = nil
@@ -71,11 +52,13 @@ RSpec.configure do |config|
     @menu_enter_keys = []
     @menu_exit_keys = []
     @menu_index = nil
+    @game_dir = nil
+    @xedit_dir = nil
     @remaining_expected_syscalls = nil
     example.run
     expect(@remaining_expected_syscalls || []).to eq []
   end
-  config.before(:each) do
+  config.before do
     add_test_game_types
   end
 end

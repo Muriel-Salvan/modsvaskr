@@ -8,7 +8,8 @@ module Modsvaskr
   # Common functionality for any tests suite
   class TestsSuite
 
-    include Logger, RunCmd
+    include RunCmd
+    include Logger
 
     # Constructor
     #
@@ -33,7 +34,7 @@ module Modsvaskr
     #
     # Parameters::
     # * *statuses* (Array<[String, String]>): Ordered list of [test name, test status]
-    def set_statuses(statuses)
+    def statuses=(statuses)
       current_statuses = self.statuses
       statuses.each do |(test_name, test_status)|
         test_status_info = current_statuses.find { |(search_test_name, _search_test_status)| search_test_name == test_name }

@@ -1,6 +1,6 @@
 describe 'Logs menu' do
 
-  before(:each) do
+  before do
     # Register the key sequence getting to the desired menu
     entering_menu_keys %w[KEY_ENTER]
     exiting_menu_keys %w[KEY_ESCAPE]

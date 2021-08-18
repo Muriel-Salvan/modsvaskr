@@ -1,6 +1,6 @@
 describe 'Game menu - Skyrim SE' do
 
-  before(:each) do
+  before do
     # Register the key sequence getting to the desired menu
     entering_menu_keys %w[KEY_ENTER]
     exiting_menu_keys %w[KEY_ESCAPE]
@@ -12,12 +12,13 @@ describe 'Game menu - Skyrim SE' do
       'https://skse.silverlock.org/beta/skse64_2_00_19.7z' => 'skse.silverlock.org/skse64_2_00_19.7z'
     )
     mock_system_calls [
-      ['"7z.exe" x "/tmp/modsvaskr/skse64.7z" -o"/tmp/modsvaskr/skse64" -r', proc do
-        FileUtils.mkdir_p '/tmp/modsvaskr/skse64/skse64'
-        File.write('/tmp/modsvaskr/skse64/skse64/mocked_skse64.txt', 'Dummy content')
+      [%r{"7z.exe" x "[^"]*/modsvaskr/skse64.7z" -o"[^"]*/modsvaskr/skse64" -r}, proc do |cmd|
+        skse64_tmp_dir = cmd.match(%r{"7z.exe" x "[^"]*/modsvaskr/skse64.7z" -o"([^"]*/modsvaskr/skse64)" -r})[1]
+        FileUtils.mkdir_p "#{skse64_tmp_dir}/skse64"
+        File.write("#{skse64_tmp_dir}/skse64/mocked_skse64.txt", 'Dummy content')
       end]
     ]
-    with_game_dir do |game_dir|
+    with_game_dir do
       with_tmp_dir('7-Zip') do |seven_zip_dir|
         run_modsvaskr(
           config: {
