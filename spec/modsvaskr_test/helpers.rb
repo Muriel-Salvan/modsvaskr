@@ -63,7 +63,7 @@ module ModsvaskrTest
       config['auto_keys'] << 'KEY_ESCAPE' unless debug?
       config['no_prompt'] = !debug?
       with_tmp_dir('workspace') do |workspace_dir|
-        Modsvaskr::Logger.stdout_io = Logger.new('/dev/null') unless debug?
+        Modsvaskr::Logger.stdout_io = Logger.new(nil) unless debug?
         Modsvaskr::Logger.log_file = "#{workspace_dir}/modsvaskr_test.log"
         config_file = "#{workspace_dir}/modsvaskr.yaml"
         File.write(config_file, config.to_yaml)

@@ -12,9 +12,10 @@ describe 'Game menu - Skyrim SE' do
       'https://skse.silverlock.org/beta/skse64_2_00_19.7z' => 'skse.silverlock.org/skse64_2_00_19.7z'
     )
     mock_system_calls [
-      ['"7z.exe" x "/tmp/modsvaskr/skse64.7z" -o"/tmp/modsvaskr/skse64" -r', proc do
-        FileUtils.mkdir_p '/tmp/modsvaskr/skse64/skse64'
-        File.write('/tmp/modsvaskr/skse64/skse64/mocked_skse64.txt', 'Dummy content')
+      [%r{"7z.exe" x "[^"]*/modsvaskr/skse64.7z" -o"[^"]*/modsvaskr/skse64" -r}, proc do |cmd|
+        skse64_tmp_dir = cmd.match(%r{"7z.exe" x "[^"]*/modsvaskr/skse64.7z" -o"([^"]*/modsvaskr/skse64)" -r})[1]
+        FileUtils.mkdir_p "#{skse64_tmp_dir}/skse64"
+        File.write("#{skse64_tmp_dir}/skse64/mocked_skse64.txt", 'Dummy content')
       end]
     ]
     with_game_dir do
