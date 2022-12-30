@@ -88,11 +88,9 @@ describe 'Main menu' do
     # We can still check that it works with TEST_DEBUG=1
     # cf https://github.com/ruby/curses/issues/65
     # TODO: Uncomment when Ruby curses will be fixed.
-    # rubocop:disable Style/AsciiComments
     # expect_menu_items_to_include('Test Game 1 - 素晴らしいゲーム')
     # expect_menu_items_to_include('Test Game 2 - さらに良いゲーム')
     # expect_menu_items_to_include('Test Game 3 - それほど素晴らしいゲームではありません')
-    # rubocop:enable Style/AsciiComments
     expect_menu_items_to_include(/Test Game 1 - .+/)
     expect_menu_items_to_include(/Test Game 2 - .+/)
     expect_menu_items_to_include(/Test Game 3 - .+/)
@@ -115,7 +113,7 @@ describe 'Main menu' do
         ]
       }
     )
-    expect(initialized).to eq true
+    expect(initialized).to be true
   end
 
   it 'fails when the game type from the config is unknown' do

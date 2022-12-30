@@ -171,7 +171,7 @@ module Modsvaskr
             # Check for which reason the game has stopped, and eventually end the testing session.
             # Careful as this JSON file can be written by Papyrus that treat strings as case insensitive.
             # cf. https://github.com/xanderdunn/skaar/wiki/Common-Tasks
-            auto_test_config = JSON.parse(File.read(auto_test_config_file))['string'].map { |key, value| [key.downcase, value.downcase] }.to_h
+            auto_test_config = JSON.parse(File.read(auto_test_config_file))['string'].to_h { |key, value| [key.downcase, value.downcase] }
             if auto_test_config['stopped_by'] == 'user'
               log "[ In-game testing #{@game.name} ] - Tests have been stopped by user."
               break
@@ -199,12 +199,12 @@ module Modsvaskr
                 File.write(
                   "#{@game.path}/Data/SKSE/Plugins/StorageUtilData/AutoTest_#{first_tests_suite_to_run}_Statuses.json",
                   JSON.pretty_generate(
-                    'string' => ((last_test_statuses[first_tests_suite_to_run] || []) + [[first_test_to_run, '']]).map do |(test_name, test_status)|
+                    'string' => ((last_test_statuses[first_tests_suite_to_run] || []) + [[first_test_to_run, '']]).to_h do |(test_name, test_status)|
                       [
                         test_name,
                         test_name == first_test_to_run ? 'failed_ctd' : test_status
                       ]
-                    end.to_h
+                    end
                   )
                 )
                 # Notify the callbacks updating test statuses

@@ -110,7 +110,7 @@ module Modsvaskr
                       if all_tests_selected
                         selected_tests_suites.delete(tests_suite)
                       else
-                        selected_tests_suites[tests_suite] = statuses_for_suite.map { |(test_name, _test_status)| [test_name, nil] }.to_h
+                        selected_tests_suites[tests_suite] = statuses_for_suite.to_h { |(test_name, _test_status)| [test_name, nil] }
                       end
                       :menu_refresh
                     end

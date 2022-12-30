@@ -129,7 +129,7 @@ module ModsvaskrTest
     # Parameters::
     # * *line* (String or Regexp): Log line to look for
     def expect_logs_to_include(line)
-      expect(@last_logs).not_to eq nil
+      expect(@last_logs).not_to be_nil
       expect(@last_logs).to include(line), "Expected logs to include \"#{line}\" but got those:\n#{@last_logs.join("\n")}"
     end
 
@@ -164,9 +164,9 @@ module ModsvaskrTest
         EO_ERROR_MESSAGE
       end
       if line.is_a?(Regexp)
-        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to eq(true), error_msg_proc
+        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to be true, error_msg_proc
       else
-        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.include?(line) }).to eq(true), error_msg_proc
+        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.include?(line) }).to be true, error_msg_proc
       end
     end
 
@@ -279,14 +279,14 @@ module ModsvaskrTest
         # Add test game plugins
         config.instance_eval do
           @game_types.merge!(
-            Dir.glob("#{__dir__}/games/*.rb").map do |game_type_file|
+            Dir.glob("#{__dir__}/games/*.rb").to_h do |game_type_file|
               require game_type_file
               base_name = File.basename(game_type_file, '.rb')
               [
                 base_name.to_sym,
                 ModsvaskrTest::Games.const_get(base_name.split('_').collect(&:capitalize).join.to_sym)
               ]
-            end.to_h
+            end
           )
         end
         config
@@ -303,14 +303,14 @@ module ModsvaskrTest
         tests_runner.instance_exec do
           @tests_suites = @tests_suites.
             # First add tests suites defined in tests
-            merge(Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
+            merge(Dir.glob("#{__dir__}/tests_suites/*.rb").to_h do |tests_suite_file|
               require tests_suite_file
               tests_suite = File.basename(tests_suite_file, '.rb').to_sym
               [
                 tests_suite,
                 ModsvaskrTest::TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, game)
               ]
-            end.to_h).
+            end).
             # Then filter them if needed
             select { |tests_suite, _tests_suite_instance| selected_tests_suites.nil? || selected_tests_suites.include?(tests_suite) }
         end
@@ -325,7 +325,7 @@ module ModsvaskrTest
     def mock_xedit_dump_with(csv)
       mock_system_calls [
         ['"SSEEdit.exe" -IKnowWhatImDoing -AllowMasterFilesEdit -SSE -autoload -script:"Modsvaskr_DumpInfo.pas"', proc do
-          expect(File.exist?("#{@xedit_dir}/Edit Scripts/Modsvaskr_DumpInfo.pas")).to eq true
+          expect(File.exist?("#{@xedit_dir}/Edit Scripts/Modsvaskr_DumpInfo.pas")).to be true
           # Mock the generation of the CSV
           File.write("#{@xedit_dir}/Edit Scripts/Modsvaskr_ExportedDumpInfo.csv", csv)
           true

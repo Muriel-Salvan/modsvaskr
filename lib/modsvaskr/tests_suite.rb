@@ -52,7 +52,7 @@ module Modsvaskr
 
     # Remove all tests from this suite
     def clear_tests
-      File.unlink(json_statuses_file) if File.exist?(json_statuses_file)
+      FileUtils.rm_f(json_statuses_file)
     end
 
     private

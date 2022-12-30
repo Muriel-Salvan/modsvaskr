@@ -64,7 +64,7 @@ module Modsvaskr
       # * Array<String>: List of all active plugins, including masters
       def read_load_order
         game_esps +
-          File.read("#{ENV['USERPROFILE']}/AppData/Local/Skyrim Special Edition/plugins.txt").split("\n").map do |line|
+          File.read("#{ENV.fetch('USERPROFILE')}/AppData/Local/Skyrim Special Edition/plugins.txt").split("\n").map do |line|
             line =~ /^\*(.+)$/ ? Regexp.last_match(1).downcase : nil
           end.compact
       end

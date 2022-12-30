@@ -21,14 +21,14 @@ module Modsvaskr
       @config = config
       @game = game
       # Parse tests suites
-      @tests_suites = Dir.glob("#{__dir__}/tests_suites/*.rb").map do |tests_suite_file|
+      @tests_suites = Dir.glob("#{__dir__}/tests_suites/*.rb").to_h do |tests_suite_file|
         tests_suite = File.basename(tests_suite_file, '.rb').to_sym
         require "#{__dir__}/tests_suites/#{tests_suite}.rb"
         [
           tests_suite,
           TestsSuites.const_get(tests_suite.to_s.split('_').collect(&:capitalize).join.to_sym).new(tests_suite, @game)
         ]
-      end.to_h
+      end
       @tests_info_file = "#{@game.path}/Data/Modsvaskr/Tests/TestsInfo.json"
     end
 
@@ -175,12 +175,12 @@ module Modsvaskr
       unless defined?(@tests_info_cache)
         @tests_info_cache =
           if File.exist?(@tests_info_file)
-            JSON.parse(File.read(@tests_info_file)).map do |tests_suite_str, tests_suite_info|
+            JSON.parse(File.read(@tests_info_file)).to_h do |tests_suite_str, tests_suite_info|
               [
                 tests_suite_str.to_sym,
                 tests_suite_info.transform_values { |test_info| test_info.transform_keys(&:to_sym) }
               ]
-            end.to_h
+            end
           else
             {}
           end

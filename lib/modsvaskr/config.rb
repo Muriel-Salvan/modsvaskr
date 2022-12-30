@@ -15,14 +15,14 @@ module Modsvaskr
       @config = YAML.safe_load(File.read(file)) || {}
       # Parse all game types plugins
       # Hash<Symbol, Class>
-      @game_types = Dir.glob("#{__dir__}/games/*.rb").map do |game_type_file|
+      @game_types = Dir.glob("#{__dir__}/games/*.rb").to_h do |game_type_file|
         require game_type_file
         base_name = File.basename(game_type_file, '.rb')
         [
           base_name.to_sym,
           Games.const_get(base_name.split('_').collect(&:capitalize).join.to_sym)
         ]
-      end.to_h
+      end
     end
 
     # Get the games list
