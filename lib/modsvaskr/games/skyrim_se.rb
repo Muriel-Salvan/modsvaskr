@@ -50,6 +50,10 @@ module Modsvaskr
           dawnguard.esm
           hearthfires.esm
           dragonborn.esm
+          ccbgssse001-fish.esm
+          ccqdrsse001-survivalmode.esl
+          ccbgssse037-curios.esl
+          ccbgssse025-advdsgs.esm
         ]
       end
 
