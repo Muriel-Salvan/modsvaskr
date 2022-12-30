@@ -1,3 +1,9 @@
+# [v0.2.0](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.12...v0.2.0) (2022-12-30 19:41:06)
+
+### Features
+
+* [[Feature] Adapted to the new Skyrim SE 1.6.x masters](https://github.com/Muriel-Salvan/modsvaskr/commit/c442ffb7126dca704b072cf6964ea0df15237e2c)
+
 # [v0.1.12](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.11...v0.1.12) (2021-08-18 13:12:29)
 
 ### Patches
