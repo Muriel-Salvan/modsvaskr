@@ -47,7 +47,7 @@ jobs:
         uses: actions/setup-node@v2
 
       - name: Install semantic-release
-        run: npm install @semantic-release/git @semantic-release/changelog @semantic-release/exec semantic-release-rubygem -D
+        run: npm install @semantic-release/git@9.0.1 @semantic-release/changelog@5.0.1 @semantic-release/exec@5.0.0 semantic-release-rubygem -D
 
       - name: Semantic releasing
         run: npx semantic-release
