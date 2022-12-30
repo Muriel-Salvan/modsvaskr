@@ -11,12 +11,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
-
-      - name: Install dependencies
-        run: bundle install
+          ruby-version: '3.1'
+          bundler-cache: true
 
       # Need to specify TERM in order for ncurses to work in a TTY
       # cf https://github.com/actions/runner/issues/241
@@ -40,18 +38,16 @@ jobs:
           fail-fast: true
 
       - name: Install Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '3.1'
+          bundler-cache: true
 
       - name: Install Node
         uses: actions/setup-node@v2
 
       - name: Install semantic-release
-        run: npm install @semantic-release/git @semantic-release/changelog @semantic-release/exec semantic-release-rubygem -D
-
-      - name: Install dependencies
-        run: bundle install
+        run: npm install @semantic-release/git@9.0.1 @semantic-release/changelog@5.0.1 @semantic-release/exec@5.0.0 semantic-release-rubygem -D
 
       - name: Semantic releasing
         run: npx semantic-release

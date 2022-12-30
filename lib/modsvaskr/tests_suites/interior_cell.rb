@@ -46,14 +46,14 @@ module Modsvaskr
           flatten.
           sort.
           uniq.
-          map do |cell_name|
+          to_h do |cell_name|
             [
               cell_name,
               {
                 name: "Load cell #{cell_name}"
               }
             ]
-          end.to_h
+          end
       end
 
     end

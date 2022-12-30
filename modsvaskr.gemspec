@@ -10,7 +10,8 @@ Gem::Specification.new do |spec|
   spec.summary = 'Stronghold for mods acting like companions: The Modsvaskr'
   spec.description = 'Command-line UI handling a full Mods\' ecosystem for Bethesda\'s games.'
   spec.homepage = 'https://github.com/Muriel-Salvan/modsvaskr'
-  spec.required_ruby_version = '>= 2.6'
+  spec.required_ruby_version = '>= 3.1'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.files = Dir['{bin,lib,xedit_scripts}/**/*']
   Dir['bin/**/*'].each do |exec_name|
@@ -19,17 +20,17 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'curses_menu', '~> 0.0'
   spec.add_dependency 'elder_scrolls_plugin', '~> 0.0'
-  spec.add_dependency 'nokogiri', '~> 1.12'
+  spec.add_dependency 'nokogiri', '~> 1.13'
 
   # Development dependencies (tests, build)
   # Test framework
-  spec.add_development_dependency 'rspec', '~> 3.10'
+  spec.add_development_dependency 'rspec', '~> 3.12'
   # Mock HTTP calls
-  spec.add_development_dependency 'webmock', '~> 3.14'
+  spec.add_development_dependency 'webmock', '~> 3.18'
   # Automatic semantic releasing
   spec.add_development_dependency 'sem_ver_components', '~> 0.3'
   # Lint checker
-  spec.add_development_dependency 'rubocop', '~> 1.19'
+  spec.add_development_dependency 'rubocop', '~> 1.41'
   # Lint checker for rspec
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.4'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.16'
 end

@@ -27,9 +27,7 @@ describe 'Game tests menu' do
         expect_menu_items_to_include('[+] exterior_cell - 0 / 1')
         expect_menu_items_to_include(/\[ \] .+ -  - Load .* cell -2, -2/, menu_idx: -4)
         # TODO: Use the following when ncurses will handle UTF-8 properly
-        # rubocop:disable Style/AsciiComments
         # expect_menu_items_to_include('[ ] フォートサンガード -  - Load フォートサンガード cell -2, -2', menu_idx: -4)
-        # rubocop:enable Style/AsciiComments
       end
 
       it 'discovers only cells modifying the vanilla ones' do

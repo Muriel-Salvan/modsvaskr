@@ -53,11 +53,11 @@ module Modsvaskr
     #
     # Parameters::
     # * *csv* (String): Name of the CSV file (from Edit Scripts), without .csv
-    # * *row_block* (Proc): Code called for each CSV row
+    # * Proc: Code called for each CSV row
     #   Parameters::
     #   * *row* (Array<String>): CSV row
-    def parse_csv(csv, &row_block)
-      CSV.parse(Encoding.to_utf_8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&row_block)
+    def parse_csv(csv, &)
+      CSV.parse(Encoding.to_utf_8(File.read("#{install_path}/Edit Scripts/#{csv}.csv", mode: 'rb'))).each(&)
     end
 
   end

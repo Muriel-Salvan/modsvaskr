@@ -34,7 +34,7 @@ describe 'Game menu - Skyrim SE' do
           },
           keys: %w[KEY_DOWN KEY_ENTER]
         ) do
-          expect(File.exist?("#{game_dir}/mocked_skse64.txt")).to eq true
+          expect(File.exist?("#{game_dir}/mocked_skse64.txt")).to be true
         end
       end
     end
