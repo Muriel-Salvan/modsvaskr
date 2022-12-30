@@ -164,9 +164,9 @@ module ModsvaskrTest
         EO_ERROR_MESSAGE
       end
       if line.is_a?(Regexp)
-        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to be true, error_msg_proc
+        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to be(true), error_msg_proc
       else
-        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.include?(line) }).to be true, error_msg_proc
+        expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.include?(line) }).to be(true), error_msg_proc
       end
     end
 
