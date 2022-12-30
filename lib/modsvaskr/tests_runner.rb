@@ -136,7 +136,7 @@ module Modsvaskr
           selected_in_game_tests_downcase = selected_in_game_tests.map(&:downcase)
           in_game_tests_subscriptions[in_game_tests_suite] = [] unless in_game_tests_subscriptions.key?(in_game_tests_suite)
           in_game_tests_subscriptions[in_game_tests_suite] << {
-            tests_suite: tests_suite,
+            tests_suite:,
             in_game_tests: selected_in_game_tests_downcase,
             selected_tests: suite_selected_tests
           }

@@ -28,7 +28,7 @@ describe 'Game tests menu' do
               }
             ]
           },
-          keys: keys
+          keys:
         )
       end
     end

@@ -54,7 +54,7 @@ module Modsvaskr
     def run(selected_tests)
       unknown_tests_suites = selected_tests.keys - @available_tests_suites
       log "[ In-game testing #{@game.name} ] - !!! The following in-game tests suites are not supported: #{unknown_tests_suites.join(', ')}" unless unknown_tests_suites.empty?
-      tests_to_run = selected_tests.reject { |tests_suite, _tests| unknown_tests_suites.include?(tests_suite) }
+      tests_to_run = selected_tests.except(*unknown_tests_suites)
       return if tests_to_run.empty?
 
       FileUtils.mkdir_p "#{@game.path}/Data/SKSE/Plugins/StorageUtilData"

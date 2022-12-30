@@ -45,13 +45,13 @@ module Modsvaskr
       end
       CursesMenu.new(
         "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods#{!last_modsvaskr_version.nil? && last_modsvaskr_version != Modsvaskr::VERSION ? " - !!! New version available: #{last_modsvaskr_version}" : ''}",
-        key_presses: key_presses
+        key_presses:
       ) do |main_menu|
         @config.games.each do |game|
           main_menu.item "#{game.name} (#{game.path})" do
             CursesMenu.new(
               "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name}",
-              key_presses: key_presses
+              key_presses:
             ) do |game_menu|
               game_menu.item 'Testing' do
                 # Read tests info
@@ -61,7 +61,7 @@ module Modsvaskr
                 selected_tests_suites = {}
                 CursesMenu.new(
                   "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name} > Testing",
-                  key_presses: key_presses
+                  key_presses:
                 ) do |test_menu|
                   tests_runner.tests_suites.each do |tests_suite|
                     statuses_for_suite = tests_runner.statuses_for(tests_suite)
@@ -83,7 +83,7 @@ module Modsvaskr
                           execute: proc do
                             CursesMenu.new(
                               "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name} > Testing > Tests #{tests_suite}",
-                              key_presses: key_presses
+                              key_presses:
                             ) do |tests_suite_menu|
                               statuses_for_suite.each do |(test_name, test_status)|
                                 test_selected = selected_tests_suites.key?(tests_suite) && selected_tests_suites[tests_suite].key?(test_name)
@@ -179,7 +179,7 @@ module Modsvaskr
         main_menu.item 'See logs' do
           CursesMenu.new(
             'Modsvaskr - Stronghold of Mods > Logs',
-            key_presses: key_presses
+            key_presses:
           ) do |logs_menu|
             File.read(Logger.log_file).split("\n").each do |line|
               logs_menu.item line

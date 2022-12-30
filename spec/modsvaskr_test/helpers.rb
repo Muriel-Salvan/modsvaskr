@@ -93,7 +93,7 @@ module ModsvaskrTest
       with_game_dir do
         with_xedit_dir do
           mock_xedit_dump_with csv
-          mock_in_game_tests_run(expect_tests: expect_tests, mock_tests_statuses: mock_tests_statuses) if run
+          mock_in_game_tests_run(expect_tests:, mock_tests_statuses:) if run
           run_modsvaskr(
             config: {
               'games' => [
