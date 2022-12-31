@@ -87,7 +87,7 @@ module ModsvaskrTest
     def run_and_discover(csv: '', run: false, expect_tests: {}, mock_tests_statuses: {})
       self.test_tests_suites = [tests_suite]
       # Register the key sequence getting to the desired menu
-      entering_menu_keys %w[KEY_ENTER KEY_ENTER]
+      entering_menu_keys %w[KEY_ENTER KEY_DOWN KEY_ENTER]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
       menu_index_to_test(-3)
       with_game_dir do

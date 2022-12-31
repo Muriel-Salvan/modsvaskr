@@ -32,7 +32,7 @@ describe 'Game menu - Skyrim SE' do
             ],
             '7zip' => seven_zip_dir
           },
-          keys: %w[KEY_DOWN KEY_ENTER]
+          keys: %w[KEY_DOWN KEY_DOWN KEY_ENTER]
         ) do
           expect(File.exist?("#{game_dir}/mocked_skse64.txt")).to be true
         end
