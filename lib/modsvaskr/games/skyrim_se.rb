@@ -74,11 +74,11 @@ module Modsvaskr
       # Install SKSE64 corresponding to our game
       def install_skse64
         doc = Nokogiri::HTML(URI.open('https://skse.silverlock.org/'))
-        p_element = doc.css('p').find { |el| el.text.strip =~ /^Current SE build .+: 7z archive$/ }
+        p_element = doc.css('p').find { |el| el.text.strip =~ /^Current Anniversary Edition build .+ Download 7z File$/m }
         if p_element.nil?
           log '!!! Can\'t get SKSE64 from https://skse.silverlock.org/. It looks like the page structure has changed. Please update the code or install it manually.'
         else
-          url = "https://skse.silverlock.org/#{p_element.at('a')['href']}"
+          url = p_element.at('a')['href']
           path = "#{@tmp_dir}/skse64.7z"
           FileUtils.mkdir_p File.dirname(path)
           log "Download from #{url} => #{path}..."
