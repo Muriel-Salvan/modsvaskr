@@ -51,6 +51,8 @@ module ModsvaskrTest
       end
     end
 
+    attr_reader :test_stdout
+
     # Instantiate a Modsvaskr instance and play a given keys sequence.
     #
     # Parameters::
@@ -63,7 +65,8 @@ module ModsvaskrTest
       config['auto_keys'] << 'KEY_ESCAPE' unless debug?
       config['no_prompt'] = !debug?
       with_tmp_dir('workspace') do |workspace_dir|
-        Modsvaskr::Logger.stdout_io = Logger.new(nil) unless debug?
+        @test_stdout = StringIO.new
+        Modsvaskr::Logger.stdout_io = @test_stdout unless debug?
         Modsvaskr::Logger.log_file = "#{workspace_dir}/modsvaskr_test.log"
         config_file = "#{workspace_dir}/modsvaskr.yaml"
         File.write(config_file, config.to_yaml)
@@ -144,7 +147,7 @@ module ModsvaskrTest
       expect(ModsvaskrTest.screenshots[menu_idx][1]).to match line
     end
 
-    # Expect the a menu displayed (referenced by its index) to have an item matching a given line
+    # Expect the menu displayed (referenced by its index) to have an item matching a given line
     #
     # Parameters::
     # * *line* (String or Regexp): Line to match against the menu items
@@ -167,6 +170,28 @@ module ModsvaskrTest
         expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.match(line) }).to be(true), error_msg_proc
       else
         expect(ModsvaskrTest.screenshots[menu_idx][3..-3].any? { |menu_line| menu_line.include?(line) }).to be(true), error_msg_proc
+      end
+    end
+
+    # Expect the menu displayed (referenced by its index) to have a given item matching a given line
+    #
+    # Parameters::
+    # * *line* (String or Regexp): Line to match against the menu items
+    # * *menu_item_idx* (Integer): Menu item index to be matched
+    # * *menu_idx* (Integer or nil): Menu index on which the expectation has to be performed, or nil for the last one [default: @menu_index]
+    def expect_menu_item_to_include(menu_item_idx, line, menu_idx: @menu_index)
+      menu_idx = -1 if menu_idx.nil?
+      expect(ModsvaskrTest.screenshots.size).to be > 0
+      error_msg_proc = proc do
+        <<~EO_ERROR_MESSAGE
+          Expected menu ##{menu_idx} to have "#{line}" on item ##{menu_item_idx}, but got this instead:
+          #{ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx].strip}
+        EO_ERROR_MESSAGE
+      end
+      if line.is_a?(Regexp)
+        expect(ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx].match(line)).to be(true), error_msg_proc
+      else
+        expect(ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx].include?(line)).to be(true), error_msg_proc
       end
     end
 
@@ -259,7 +284,7 @@ module ModsvaskrTest
     # Delete the directory when exiting
     #
     # Parameters::
-    # * Proc: Code called with xedit dir setup. The code can then call game_dir to get access to the game directory.
+    # * Proc: Code called with xedit dir setup. The code can then call xedit_dir to get access to the xEdit directory.
     def with_xedit_dir
       with_tmp_dir('xedit') do |tmp_dir|
         @xedit_dir = tmp_dir

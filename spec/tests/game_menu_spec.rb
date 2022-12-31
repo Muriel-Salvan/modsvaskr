@@ -21,6 +21,7 @@ describe 'Game menu' do
       }
     )
     expect_menu_title_to_include('Test Game')
+    expect_menu_items_to_include('Plugins')
     expect_menu_items_to_include('Testing')
   end
 
