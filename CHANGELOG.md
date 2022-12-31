@@ -1,3 +1,9 @@
+# [v0.2.1](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.2.0...v0.2.1) (2022-12-31 14:06:40)
+
+### Patches
+
+* [Migrate to latest skse](https://github.com/Muriel-Salvan/modsvaskr/commit/267b18370f0f60267a7731cc99b9e79e965cbdac)
+
 # [v0.2.0](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.1.12...v0.2.0) (2022-12-30 19:41:06)
 
 ### Features
