@@ -9,7 +9,7 @@ describe 'Game menu - Skyrim SE' do
   it 'installs skse64 in the game' do
     mock_web(
       'https://skse.silverlock.org/' => 'skse.silverlock.org/index.html',
-      'https://skse.silverlock.org/beta/skse64_2_00_19.7z' => 'skse.silverlock.org/skse64_2_00_19.7z'
+      'https://skse.silverlock.org/beta/skse64_2_02_03.7z' => 'skse.silverlock.org/skse64_2_00_19.7z'
     )
     mock_system_calls [
       [%r{"7z.exe" x "[^"]*/modsvaskr/skse64.7z" -o"[^"]*/modsvaskr/skse64" -r}, proc do |cmd|
