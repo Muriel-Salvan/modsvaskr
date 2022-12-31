@@ -9,6 +9,8 @@ module ModsvaskrTest
 
   module Helpers
 
+    attr_reader :game_dir, :xedit_dir, :test_stdout
+
     # Are we in debug mode?
     #
     # Result::
@@ -50,8 +52,6 @@ module ModsvaskrTest
         FileUtils.rm_rf dir
       end
     end
-
-    attr_reader :test_stdout
 
     # Instantiate a Modsvaskr instance and play a given keys sequence.
     #
@@ -261,8 +261,6 @@ module ModsvaskrTest
       end
       @remaining_expected_syscalls.concat(expected_syscalls)
     end
-
-    attr_reader :game_dir, :xedit_dir
 
     # Mock a temporary game directory.
     # Delete the directory when exiting.

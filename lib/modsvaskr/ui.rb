@@ -63,7 +63,7 @@ module Modsvaskr
                 selected_esps = {}
                 CursesMenu.new(
                   "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name} > Plugins",
-                  key_presses: key_presses
+                  key_presses:
                 ) do |plugins_menu|
                   game.load_order.each.with_index do |esp, idx|
                     plugins_menu.item "[#{selected_esps.key?(esp) ? '*' : ' '}] #{idx} - #{esp}" do

@@ -2,7 +2,7 @@ describe 'Game plugins menu' do
 
   context 'when cleaning plugins' do
 
-    before(:each) do
+    before do
       entering_menu_keys %w[KEY_ENTER KEY_ENTER]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
       menu_index_to_test(-3)
@@ -15,7 +15,7 @@ describe 'Game plugins menu' do
           FileUtils.mkdir_p "#{game_dir}/Data"
           File.write(original_file, 'Original test_game.esm content')
           mock_system_calls [
-            [%r{"SSEEdit.exe" -quickautoclean}, proc do |cmd|
+            [/"SSEEdit.exe" -quickautoclean/, proc do
               expect(test_stdout.string.split("\n").last).to eq 'Please double-click on the following plugin: test_game.esm'
               File.write(original_file, 'Cleaned esp content')
             end]
@@ -42,9 +42,9 @@ describe 'Game plugins menu' do
             ]
           )
           expected_cleaned_file = "#{game_dir}/Data/cleaned_plugins/test_game.esm"
-          expect(File.exist?(original_file))
+          expect(File.exist?(original_file)).to be true
           expect(File.read(original_file)).to eq 'Original test_game.esm content'
-          expect(File.exist?(expected_cleaned_file))
+          expect(File.exist?(expected_cleaned_file)).to be true
           expect(File.read(expected_cleaned_file)).to eq 'Cleaned esp content'
         end
       end
@@ -58,15 +58,15 @@ describe 'Game plugins menu' do
           File.write("#{game_dir}/Data/mod1.esp", 'Original mod1.esp content')
           File.write("#{game_dir}/Data/mod3.esp", 'Original mod3.esp content')
           mock_system_calls [
-            [%r{"SSEEdit.exe" -quickautoclean}, proc do |cmd|
+            [/"SSEEdit.exe" -quickautoclean/, proc do
               expect(test_stdout.string.split("\n").last).to eq 'Please double-click on the following plugin: test_game.esm'
               File.write("#{game_dir}/Data/test_game.esm", 'Cleaned test_game.esm content')
             end],
-            [%r{"SSEEdit.exe" -quickautoclean}, proc do |cmd|
+            [/"SSEEdit.exe" -quickautoclean/, proc do
               expect(test_stdout.string.split("\n").last).to eq 'Please double-click on the following plugin: mod1.esp'
               File.write("#{game_dir}/Data/mod1.esp", 'Cleaned mod1.esp content')
             end],
-            [%r{"SSEEdit.exe" -quickautoclean}, proc do |cmd|
+            [/"SSEEdit.exe" -quickautoclean/, proc do
               expect(test_stdout.string.split("\n").last).to eq 'Please double-click on the following plugin: mod3.esp'
               File.write("#{game_dir}/Data/mod3.esp", 'Cleaned mod3.esp content')
             end]

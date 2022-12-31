@@ -63,7 +63,7 @@ module Modsvaskr
           dir: @install_path,
           exe: 'SSEEdit.exe'
         },
-        args: %W[
+        args: %w[
           -quickautoclean
         ]
       )
