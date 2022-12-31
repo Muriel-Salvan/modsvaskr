@@ -1,3 +1,9 @@
+# [v1.0.0](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.2.1...v1.0.0) (2022-12-31 17:11:20)
+
+### Breaking changes
+
+* [Added menu to see and clean plugins](https://github.com/Muriel-Salvan/modsvaskr/commit/9e522fab42ce28651cf8256942130cbbde4098a8)
+
 # [v0.2.1](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.2.0...v0.2.1) (2022-12-31 14:06:40)
 
 ### Patches
