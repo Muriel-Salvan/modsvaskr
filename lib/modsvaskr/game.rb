@@ -203,6 +203,29 @@ module Modsvaskr
       [load_order[form_id / 16_777_216], form_id % 16_777_216]
     end
 
+    # Clean a list plugins.
+    # Make sure they are cleaned in the right order, according to the load order.
+    # Put the cleaned plugins in a cleaned_plugins subfolder.
+    # Make sure that subsequent plugins to be cleaned are cleaned with the previously cleaned plugins in the list.
+    #
+    # Parameters::
+    # * *plugins* (Array<String>): List of plugins to be cleaned
+    def clean_plugins(plugins)
+      return if plugins.empty?
+
+      esp = (load_order & plugins).first
+      log "Clean #{esp}"
+      FileUtils.cp "#{path}/Data/#{esp}", "#{path}/Data/#{esp}.backup"
+      begin
+        xedit.quick_auto_clean(esp)
+        clean_plugins(plugins - [esp])
+        FileUtils.mkdir_p "#{path}/Data/cleaned_plugins"
+        FileUtils.mv "#{path}/Data/#{esp}", "#{path}/Data/cleaned_plugins/#{esp}"
+      ensure
+        FileUtils.mv "#{path}/Data/#{esp}.backup", "#{path}/Data/#{esp}"
+      end
+    end
+
   end
 
 end

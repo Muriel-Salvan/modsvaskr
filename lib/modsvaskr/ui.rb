@@ -44,7 +44,13 @@ module Modsvaskr
         end
       end
       CursesMenu.new(
-        "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods#{!last_modsvaskr_version.nil? && last_modsvaskr_version != Modsvaskr::VERSION ? " - !!! New version available: #{last_modsvaskr_version}" : ''}",
+        "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods#{
+          if !last_modsvaskr_version.nil? && last_modsvaskr_version != Modsvaskr::VERSION
+            " - !!! New version available: #{last_modsvaskr_version}"
+          else
+            ''
+          end
+        }",
         key_presses:
       ) do |main_menu|
         @config.games.each do |game|
@@ -53,6 +59,27 @@ module Modsvaskr
               "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name}",
               key_presses:
             ) do |game_menu|
+              game_menu.item 'Plugins' do
+                selected_esps = {}
+                CursesMenu.new(
+                  "Modsvaskr v#{Modsvaskr::VERSION} - Stronghold of Mods > #{game.name} > Plugins",
+                  key_presses:
+                ) do |plugins_menu|
+                  game.load_order.each.with_index do |esp, idx|
+                    plugins_menu.item "[#{selected_esps.key?(esp) ? '*' : ' '}] #{idx} - #{esp}" do
+                      if selected_esps.key?(esp)
+                        selected_esps.delete(esp)
+                      else
+                        selected_esps[esp] = nil
+                      end
+                      :menu_refresh
+                    end
+                  end
+                  plugins_menu.item "Clean #{selected_esps.size} selected plugins" do
+                    game.clean_plugins(selected_esps.keys)
+                  end
+                end
+              end
               game_menu.item 'Testing' do
                 # Read tests info
                 tests_runner = TestsRunner.new(@config, game)

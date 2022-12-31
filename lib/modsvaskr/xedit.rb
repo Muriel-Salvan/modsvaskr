@@ -1,5 +1,6 @@
 require 'csv'
 require 'modsvaskr/encoding'
+require 'modsvaskr/logger'
 require 'modsvaskr/run_cmd'
 
 module Modsvaskr
@@ -7,6 +8,7 @@ module Modsvaskr
   # Helper to use an instance of xEdit
   class Xedit
 
+    include Logger
     include RunCmd
 
     # String: Installation path
@@ -47,6 +49,24 @@ module Modsvaskr
         ]
       )
       @runs[script] = nil
+    end
+
+    # Run a QuickAutoClean of a given plugin
+    #
+    # Parameters::
+    # * *esp* (String): Plugin to autoclean
+    def quick_auto_clean(esp)
+      # TODO: Find a way to select the right esp automatically
+      out "Please double-click on the following plugin: #{esp}"
+      run_cmd(
+        {
+          dir: @install_path,
+          exe: 'SSEEdit.exe'
+        },
+        args: %w[
+          -quickautoclean
+        ]
+      )
     end
 
     # Parse a CSV that has been dumped by a previous run of xEdit

@@ -9,7 +9,7 @@ describe 'Game tests menu' do
     def run_game_tests_menu(keys)
       self.test_tests_suites = %i[tests_suite in_game_tests_suite]
       # Register the key sequence getting to the desired menu
-      entering_menu_keys %w[KEY_ENTER KEY_ENTER]
+      entering_menu_keys %w[KEY_ENTER KEY_DOWN KEY_ENTER]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
       menu_index_to_test(-3)
       with_game_dir do

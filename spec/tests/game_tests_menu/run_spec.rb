@@ -14,7 +14,7 @@ describe 'Game tests menu' do
       }
       self.test_tests_suites = %i[tests_suite in_game_tests_suite]
       # Register the key sequence getting to the desired menu
-      entering_menu_keys %w[KEY_ENTER KEY_ENTER] +
+      entering_menu_keys %w[KEY_ENTER KEY_DOWN KEY_ENTER] +
         # Discover tests
         %w[KEY_ENTER KEY_DOWN KEY_ENTER KEY_DOWN KEY_DOWN KEY_ENTER KEY_HOME]
       exiting_menu_keys %w[KEY_ESCAPE KEY_ESCAPE]
