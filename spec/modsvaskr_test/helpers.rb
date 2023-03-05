@@ -4,6 +4,7 @@ require 'tmpdir'
 require 'yaml'
 require 'modsvaskr/config'
 require 'modsvaskr/ui'
+require 'modsvaskr_test/mocked_mod_organizer/mod_organizer'
 
 module ModsvaskrTest
 
@@ -127,6 +128,25 @@ module ModsvaskrTest
       end
     end
 
+    # Run Modsvaskr with a ModOrganizer test configuration setup and a set of mocked mods.
+    # Use a test MO instance on a test path.
+    #
+    # Parameters::
+    # * *mods* (Hash<String, Hash<Symbol,Object>>): Mocked mods information [default: {}]
+    # * *keys* (Array<String>): List of keys to be entered once in the menu [default: []]
+    def run_modsvaskr_with_mo(mods: {}, keys: [])
+      expect(::ModOrganizer).to receive(:new).with('/path/to/mo', hash_including(instance_name: 'TestMOInstance')).and_return(MockedModOrganizer::ModOrganizer.new(mods:))
+      run_modsvaskr(
+        config: {
+          'mod_organizer' => {
+            'installation_dir' => '/path/to/mo',
+            'instance_name' => 'TestMOInstance'
+          }
+        },
+        keys:
+      )
+    end
+
     # Expect logs to include a given line
     #
     # Parameters::
@@ -189,9 +209,9 @@ module ModsvaskrTest
         EO_ERROR_MESSAGE
       end
       if line.is_a?(Regexp)
-        expect(ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx].match(line)).to be(true), error_msg_proc
+        expect(ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx]).to match(line), error_msg_proc
       else
-        expect(ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx].include?(line)).to be(true), error_msg_proc
+        expect(ModsvaskrTest.screenshots[menu_idx][3 + menu_item_idx]).to include(line), error_msg_proc
       end
     end
 

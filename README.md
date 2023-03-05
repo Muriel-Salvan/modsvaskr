@@ -187,9 +187,15 @@ Example from `Modsvaskr/Tests/Statuses_interior_cell.json`
 When selecting your game, you can ask Modsvaskr to easily install SKSE in it. This is useful when SKSE gets upgraded.
 By selecting the `Install SKSE64` item in the game menu, Modsvaskr will download and install the latest SKSE version in your game folder.
 
-This feature cannot be used if run under Mod Organizer, as it needs to modify the game base directory. Just run `Modsvaskr.cmd` outside of Mod Organizer to use this feature.
+If you run this feature under Mod Organizer, don't forget to save the modified files from the Overwrite mode in a dedicated ModOrganizer mod to not lose them.
 
 ![Installing SKSE](docs/example_install_skse.png)
+
+### Using Modsvaskr with ModOrganizer
+
+Modsvaskr has a menu dedicated to ModOrganizer, where you can see the various mods and plugins configured in Modsvaskr.
+
+![ModOrganizer mods](docs/example_mod_organizer_mods.png)
 
 ## Troubleshooting
 

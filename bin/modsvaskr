@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
-# require 'mod_organizer'
+require 'English'
 require 'modsvaskr/config'
 require 'modsvaskr/ui'
 
 begin
   Modsvaskr::Ui.new(config: Modsvaskr::Config.new('./modsvaskr.yaml')).run
 rescue
+  puts "An exception has occurred: #{$ERROR_INFO}\n#{$ERROR_INFO.backtrace.join("\n")}"
   puts 'Press Enter to exit.'
   $stdin.gets
 end

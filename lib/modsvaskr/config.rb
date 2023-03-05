@@ -1,3 +1,4 @@
+require 'mod_organizer'
 require 'yaml'
 require 'modsvaskr/game'
 require 'modsvaskr/xedit'
@@ -71,6 +72,19 @@ module Modsvaskr
     # * Boolean: no_prompt flag
     def no_prompt
       @config['no_prompt'] || false
+    end
+
+    # Return the ModOrganizer instance, if configured.
+    #
+    # Result::
+    # * ModOrganizer or nil: The ModOrganizer instance, or nil if none
+    def mod_organizer
+      return nil unless @config['mod_organizer']
+
+      ModOrganizer.new(
+        @config['mod_organizer']['installation_dir'],
+        instance_name: @config['mod_organizer']['instance_name']
+      )
     end
 
   end

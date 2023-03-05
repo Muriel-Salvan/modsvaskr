@@ -1,5 +1,6 @@
 require 'English'
 require 'curses_menu'
+require 'launchy'
 require 'modsvaskr/logger'
 require 'modsvaskr/tests_runner'
 require 'modsvaskr/run_cmd'
@@ -20,7 +21,11 @@ module Modsvaskr
     def initialize(config:)
       log "Launch Modsvaskr UI v#{Modsvaskr::VERSION} - Logs in #{Logger.log_file}"
       @config = config
+      @mod_organizer = @config.mod_organizer
     end
+
+    # Time that should be before any file time of mods (used for sorting)
+    TIME_BEGIN = Time.parse('2000-01-01')
 
     # Run the UI
     def run
@@ -203,6 +208,102 @@ module Modsvaskr
             end
           end
         end
+        unless @mod_organizer.nil?
+          main_menu.item 'Mods Organizer' do
+            CursesMenu.new(
+              'Modsvaskr - Stronghold of Mods > Mods Organizer',
+              key_presses:
+            ) do |mo_menu|
+              # Show status
+              mo_menu.item 'Run Mod Organizer' do
+                @mod_organizer.run
+              end
+              mo_menu.item "#{@mod_organizer.mod_names.size} mods (#{@mod_organizer.mod_names.select { |mod_name| @mod_organizer.mod(name: mod_name).enabled? }.size} enabled)" do
+                CursesMenu.new(
+                  'Modsvaskr - Stronghold of Mods > Mods Organizer > Mods',
+                  key_presses:
+                ) do |mods_menu|
+                  mod_names = @mod_organizer.mods_list
+                  idx_size = (mod_names.size - 1).to_s.size
+                  mod_names.each.with_index do |mod_name, idx|
+                    mod = @mod_organizer.mod(name: mod_name)
+                    # need_update = false
+                    mods_menu.item(
+                      proc do
+                        sections = {
+                          enabled_cell: {
+                            text: mod.enabled? ? 'X' : ' ',
+                            begin_with: '[',
+                            end_with: ']',
+                            fixed_size: 3
+                          },
+                          idx_cell: {
+                            text: idx.to_s,
+                            fixed_size: idx_size
+                          },
+                          name_cell: {
+                            text: mod_name,
+                            color_pair: CursesMenu::COLORS_GREEN,
+                            fixed_size: 64
+                          },
+                          categories_cell: {
+                            text: mod.categories.map { |category| "[#{category}]" }.join(' '),
+                            fixed_size: 16
+                          },
+                          esps_cell: {
+                            text: "#{mod.plugins.size} plugins",
+                            fixed_size: 10
+                          }
+                        }
+                        mod.sources.sort_by { |source| source.download.nil? ? TIME_BEGIN : source.download.downloaded_date }.each.with_index do |source, src_idx|
+                          source_name = src_idx.zero? ? '' : '+ '
+                          source_name <<
+                            case source.type
+                            when :nexus_mods
+                              "Nexus Mod #{source.nexus_mod_id}/" +
+                                if source.download&.nexus_file_name
+                                  source.download&.nexus_file_name
+                                elsif source.file_name
+                                  source.file_name
+                                else
+                                  '<Unknown file>'
+                                end
+                            when :unknown
+                              source.file_name || '<Unknown source>'
+                            else
+                              raise "Unknown source type: #{source.type} for #{mod.name}"
+                            end
+                          sections["source_#{src_idx}".to_sym] = {
+                            text: source_name,
+                            color_pair: CursesMenu::COLORS_WHITE
+                          }
+                        end
+                        CursesMenu::CursesRow.new(sections)
+                      end,
+                      actions: proc do
+                        actions = {}
+                        # TODO: Use downloads' URL instead of mod's URL as it is very often more accurate
+                        if mod.url
+                          actions['v'] = {
+                            name: 'Visit',
+                            execute: proc { Launchy.open(mod.url) }
+                          }
+                        end
+                        actions
+                      end
+                    )
+                  end
+                  mods_menu.item 'Back' do
+                    :menu_exit
+                  end
+                end
+              end
+              mo_menu.item 'Back' do
+                :menu_exit
+              end
+            end
+          end
+        end
         main_menu.item 'See logs' do
           CursesMenu.new(
             'Modsvaskr - Stronghold of Mods > Logs',
@@ -226,6 +327,7 @@ module Modsvaskr
     ensure
       log 'Close Modsvaskr UI'
     end
+
 
   end
 

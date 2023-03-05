@@ -18,9 +18,11 @@ Gem::Specification.new do |spec|
     spec.executables << File.basename(exec_name)
   end
 
-  spec.add_dependency 'curses_menu', '~> 0.0'
+  spec.add_dependency 'curses_menu', '~> 0.2'
   spec.add_dependency 'elder_scrolls_plugin', '~> 0.0'
-  spec.add_dependency 'nokogiri', '~> 1.13'
+  spec.add_dependency 'launchy', '~> 2.5'
+  spec.add_dependency 'mod_organizer', '~> 1.0'
+  spec.add_dependency 'nokogiri', '~> 1.14'
 
   # Development dependencies (tests, build)
   # Test framework
@@ -30,7 +32,7 @@ Gem::Specification.new do |spec|
   # Automatic semantic releasing
   spec.add_development_dependency 'sem_ver_components', '~> 0.3'
   # Lint checker
-  spec.add_development_dependency 'rubocop', '~> 1.41'
+  spec.add_development_dependency 'rubocop', '~> 1.47'
   # Lint checker for rspec
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.16'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.18'
 end
