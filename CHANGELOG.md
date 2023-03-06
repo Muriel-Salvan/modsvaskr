@@ -1,3 +1,9 @@
+# [v1.1.0](https://github.com/Muriel-Salvan/modsvaskr/compare/v1.0.0...v1.1.0) (2023-03-06 00:51:04)
+
+### Features
+
+* [[#13] [Feature] Add a new ModOrganizer menu listing mods and running ModOrganizer](https://github.com/Muriel-Salvan/modsvaskr/commit/ff8ef9ece8be5e71538af2e78cb2bf5bc6692048)
+
 # [v1.0.0](https://github.com/Muriel-Salvan/modsvaskr/compare/v0.2.1...v1.0.0) (2022-12-31 17:11:20)
 
 ### Breaking changes
