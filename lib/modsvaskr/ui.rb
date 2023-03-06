@@ -328,7 +328,6 @@ module Modsvaskr
       log 'Close Modsvaskr UI'
     end
 
-
   end
 
 end
